@@ -1,0 +1,41 @@
+Game Đập muỗi cùng Ka Báo
+- Chơi triên điện thoại
+- Có 3 menu 
+-- Chế độ 1: Thời gian tính điểm cá nhân
+-- Chế độ 2: Thời gian tính điểm cá nhân xếp hạng cùng bạn bè
+
+Chế độ 1:
+- Tổng thời gian 2 phút đếm ngước
+
+
+Cửa hàng
+- Đổi xu lấy vật phẩm
+
+Vật phẩm trong cửa hàng
+- Dép
+- Vợt muỗi
+- Điện thoại
+- Vở
+
+Nhiệm vu đăng nhập
+- Mỗi ngày tặng 1 lượng xu
+
+
+-------------
+Logo: hình tượng chống muỗi. hình tròn màu trắng, có hình muỗi màu đên có viền đỏ và gạch tréo đỏ lên hình Muỗi
+
+Màn hình chính:
+Nửa trên: Logo kèm slogan
+Menu điều hướng
+- Play
+- Cửa hàng
+- Tủ đồ
+
+Game Play
+- Muỗi bay xung quan màn hình đến khi bị đập chết, khi bay có hiệu ứng âm thanh
+- Khi đập chết có hiệu ứng âm thanh, có hiệu ứng của vật phẩm đập trúng muỗi và sau khi đập trúng muỗ sẽ rơi xuống dưới màn hình
+- sau mỗi giây sẽ tự động sinh thêm 2 con muỗi
+- khi đập chết mỗi 1 con muỗn sẽ được tích lũy 1 xu
+- Hết mỗi lần chơi sẽ có đổi xúc xắc để nhận số tiền tương ứng 
+
+

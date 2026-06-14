@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-label="Hit burst effect">
+  <rect width="128" height="128" fill="none"/>
+  <g stroke-linecap="round" stroke-linejoin="round">
+    <path d="M64 10v24M64 94v24M10 64h24M94 64h24M26 26l17 17M85 85l17 17M102 26 85 43M43 85l-17 17" stroke="#fff3a4" stroke-width="9"/>
+    <path d="M64 25 75 53l30 11-30 11-11 28-11-28-30-11 30-11Z" fill="#ffcf4d" stroke="#d95a31" stroke-width="6"/>
+  </g>
+</svg>

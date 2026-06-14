@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 64" width="128" height="64" role="img" aria-label="Plus one coin popup">
+  <rect width="128" height="64" fill="none"/>
+  <g font-family="Arial, sans-serif" font-size="34" font-weight="900" stroke="#7a3e09" stroke-width="5" paint-order="stroke" fill="#fff1a8">
+    <text x="14" y="44">+1</text>
+  </g>
+  <circle cx="91" cy="32" r="20" fill="#ffd457" stroke="#c57a17" stroke-width="4"/>
+  <path d="M91 18v28M83 25c2-4 14-4 16 0M83 39c3 4 13 4 16 0" fill="none" stroke="#b96d20" stroke-width="3" stroke-linecap="round"/>
+</svg>

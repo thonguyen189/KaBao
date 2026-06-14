@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Coin">
+  <rect width="64" height="64" fill="none"/>
+  <circle cx="32" cy="32" r="25" fill="#ffd457" stroke="#c57a17" stroke-width="5"/>
+  <circle cx="32" cy="32" r="16" fill="#ffeb89" stroke="#e0a229" stroke-width="4"/>
+  <path d="M32 18v28M23 25c2-5 16-5 18 0M23 39c3 5 15 5 18 0" fill="none" stroke="#b96d20" stroke-width="4" stroke-linecap="round"/>
+</svg>

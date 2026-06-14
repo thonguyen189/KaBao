@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Đập muỗi cùng Ka Báo</title>
+    <link rel="icon" href="assets/images/logo-anti-mosquito.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="src/styles.css">
+  </head>
+  <body>
+    <main class="app" aria-live="polite">
+      <section class="screen menu-screen is-active" id="menuScreen">
+        <div class="menu-hero">
+          <img class="logo" id="gameLogo" src="assets/images/logo-anti-mosquito.svg" alt="Logo chống muỗi">
+          <div>
+            <p class="eyebrow">Ka Báo</p>
+            <h1>Đập muỗi cùng Ka Báo</h1>
+            <p class="slogan">Đập nhanh tay, sạch bóng muỗi!</p>
+          </div>
+        </div>
+
+        <div class="coin-total">
+          <img src="assets/images/coin.svg" alt="" aria-hidden="true">
+          <span>Tổng xu</span>
+          <strong id="menuTotalCoins">0</strong>
+        </div>
+
+        <button class="primary-action" id="playButton" type="button">Play</button>
+
+        <div class="best-list">
+          <h2>Top 10 cá nhân</h2>
+          <ol id="menuTopRuns"></ol>
+        </div>
+      </section>
+
+      <section class="screen gameplay-screen" id="gameplayScreen">
+        <header class="hud">
+          <div class="hud-item">
+            <span>Điểm</span>
+            <strong id="scoreValue">0</strong>
+          </div>
+          <div class="hud-item timer">
+            <span>Thời gian</span>
+            <strong id="timerValue">02:00</strong>
+          </div>
+          <div class="hud-item">
+            <span>Xu</span>
+            <strong id="coinValue">0</strong>
+          </div>
+        </header>
+        <canvas id="gameCanvas" aria-label="Vùng chơi đập muỗi"></canvas>
+      </section>
+
+      <section class="screen result-screen" id="resultScreen">
+        <div class="result-panel">
+          <p class="eyebrow">Kết quả</p>
+          <h1>Hết giờ!</h1>
+          <p class="rank-message" id="rankMessage"></p>
+
+          <dl class="result-stats">
+            <div>
+              <dt>Điểm</dt>
+              <dd id="resultScore">0</dd>
+            </div>
+            <div>
+              <dt>Muỗi đã đập</dt>
+              <dd id="resultMosquitoes">0</dd>
+            </div>
+            <div>
+              <dt>Xu nhận được</dt>
+              <dd id="resultCoins">0</dd>
+            </div>
+            <div>
+              <dt>Tổng xu</dt>
+              <dd id="resultTotalCoins">0</dd>
+            </div>
+          </dl>
+
+          <div class="result-actions">
+            <button class="primary-action" id="replayButton" type="button">Chơi lại</button>
+            <button class="secondary-action" id="homeButton" type="button">Về màn hình chính</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="src/main.js"></script>
+  </body>
+</html>

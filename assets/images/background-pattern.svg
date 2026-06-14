@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 640" width="360" height="640" role="img" aria-label="Soft gameplay background">
+  <defs>
+    <pattern id="dots" width="36" height="36" patternUnits="userSpaceOnUse">
+      <circle cx="6" cy="8" r="2" fill="#9ee3d2" opacity=".55"/>
+      <circle cx="26" cy="25" r="2" fill="#ffd06b" opacity=".45"/>
+    </pattern>
+  </defs>
+  <rect width="360" height="640" fill="#b9f1e4"/>
+  <rect width="360" height="640" fill="url(#dots)"/>
+  <path d="M0 112c53 18 105 19 157-2 58-24 121-23 203 5V0H0Z" fill="#8dddc8" opacity=".55"/>
+  <path d="M0 612c49-22 106-22 172-2 57 17 121 14 188-13v43H0Z" fill="#88d2ec" opacity=".5"/>
+</svg>

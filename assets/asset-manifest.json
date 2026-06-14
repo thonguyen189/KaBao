@@ -1,0 +1,19 @@
+{
+  "images": {
+    "logo": "images/logo-anti-mosquito.svg",
+    "mosquitoFlying": "images/mosquito-flying.svg",
+    "mosquitoSquashed": "images/mosquito-squashed.svg",
+    "slipperHit": "images/slipper-hit.svg",
+    "coin": "images/coin.svg",
+    "plusOneCoin": "images/plus-one-coin.svg",
+    "backgroundPattern": "images/background-pattern.svg",
+    "hitBurst": "images/hit-burst.svg"
+  },
+  "sounds": {
+    "mosquitoLoop": "sounds/mosquito-loop.wav",
+    "slapHit": "sounds/slap-hit.wav",
+    "coinCollect": "sounds/coin-collect.wav",
+    "gameStart": "sounds/game-start.wav",
+    "gameOver": "sounds/game-over.wav"
+  }
+}
