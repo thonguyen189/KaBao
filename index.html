@@ -26,10 +26,15 @@
         </div>
 
         <button class="primary-action" id="playButton" type="button">Play</button>
+        <button class="sound-toggle" id="menuSoundButton" type="button" aria-pressed="false">🔊 Âm thanh</button>
 
         <div class="best-list">
           <h2>Top 10 cá nhân</h2>
           <ol id="menuTopRuns"></ol>
+        </div>
+        <div class="best-list global-list">
+          <h2>Top 10 toàn cầu</h2>
+          <ol id="globalTopRuns"></ol>
         </div>
       </section>
 
@@ -41,12 +46,13 @@
           </div>
           <div class="hud-item timer">
             <span>Thời gian</span>
-            <strong id="timerValue">02:00</strong>
+            <strong id="timerValue">00:30</strong>
           </div>
           <div class="hud-item">
             <span>Xu</span>
             <strong id="coinValue">0</strong>
           </div>
+          <button class="sound-toggle sound-toggle--hud" id="gameSoundButton" type="button" aria-pressed="false">🔊</button>
         </header>
         <canvas id="gameCanvas" aria-label="Vùng chơi đập muỗi"></canvas>
       </section>
@@ -55,7 +61,26 @@
         <div class="result-panel">
           <p class="eyebrow">Kết quả</p>
           <h1>Hết giờ!</h1>
+          <button class="sound-toggle sound-toggle--result" id="resultSoundButton" type="button" aria-pressed="false">🔊 Âm thanh</button>
           <p class="rank-message" id="rankMessage"></p>
+          <div class="result-badges" id="resultBadges" aria-live="polite"></div>
+
+          <form class="nickname-form" id="nicknameForm" novalidate>
+            <label for="nicknameInput">NickName của bạn</label>
+            <div class="nickname-row">
+              <input
+                id="nicknameInput"
+                name="nickname"
+                type="text"
+                maxlength="16"
+                autocomplete="nickname"
+                placeholder="VD: Bé Vui"
+              >
+              <button class="secondary-action nickname-submit" type="submit">Lưu</button>
+            </div>
+            <p class="nickname-help">Dùng 2-16 ký tự vui vẻ, không dùng từ thô tục hay nhạy cảm.</p>
+            <p class="nickname-error" id="nicknameError" role="alert"></p>
+          </form>
 
           <dl class="result-stats">
             <div>
@@ -74,7 +99,27 @@
               <dt>Tổng xu</dt>
               <dd id="resultTotalCoins">0</dd>
             </div>
+            <div>
+              <dt>Số trận đã chơi</dt>
+              <dd id="resultPlayedMatches">0</dd>
+            </div>
+            <div>
+              <dt>Combo cao nhất</dt>
+              <dd id="resultBestCombo">0</dd>
+            </div>
           </dl>
+
+          <div class="dice-panel" id="dicePanel">
+            <div>
+              <p class="dice-title">Xúc xắc thưởng xu</p>
+              <p class="dice-copy" id="diceMessage">Tung một lần để nhận thêm xu thưởng.</p>
+            </div>
+            <button class="dice-button" id="diceButton" type="button" aria-label="Tung xúc xắc">🎲</button>
+            <div class="dice-reward">
+              <span>Thưởng</span>
+              <strong id="diceBonusValue">0</strong>
+            </div>
+          </div>
 
           <div class="result-actions">
             <button class="primary-action" id="replayButton" type="button">Chơi lại</button>

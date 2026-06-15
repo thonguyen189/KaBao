@@ -3,7 +3,9 @@ import { insertTopRun } from './gameCore.js';
 const STORAGE_KEYS = {
   totalCoins: 'kabao.totalCoins',
   topRuns: 'kabao.topRuns',
-  playedMatches: 'kabao.playedMatches'
+  playedMatches: 'kabao.playedMatches',
+  soundMuted: 'kabao.soundMuted',
+  nickname: 'kabao.nickname'
 };
 
 export function loadStats(storage = window.localStorage) {
@@ -16,6 +18,7 @@ export function loadStats(storage = window.localStorage) {
 
 export function saveMatchResult(result, storage = window.localStorage) {
   const stats = loadStats(storage);
+  const previousBestScore = stats.topRuns[0]?.score ?? 0;
   const run = {
     score: result.score,
     coins: result.coins,
@@ -26,7 +29,9 @@ export function saveMatchResult(result, storage = window.localStorage) {
     totalCoins: stats.totalCoins + result.coins,
     topRuns: ranked.runs,
     playedMatches: stats.playedMatches + 1,
-    latestRank: ranked.rank
+    latestRank: ranked.rank,
+    previousBestScore,
+    isNewRecord: result.score > previousBestScore
   };
 
   storage.setItem(STORAGE_KEYS.totalCoins, String(nextStats.totalCoins));
@@ -34,6 +39,36 @@ export function saveMatchResult(result, storage = window.localStorage) {
   storage.setItem(STORAGE_KEYS.playedMatches, String(nextStats.playedMatches));
 
   return nextStats;
+}
+
+export function awardBonusCoins(amount, storage = window.localStorage) {
+  const stats = loadStats(storage);
+  const bonus = Math.max(0, Math.floor(amount));
+  const nextStats = {
+    ...stats,
+    totalCoins: stats.totalCoins + bonus
+  };
+
+  storage.setItem(STORAGE_KEYS.totalCoins, String(nextStats.totalCoins));
+  return nextStats;
+}
+
+export function loadSoundMuted(storage = window.localStorage) {
+  return storage.getItem(STORAGE_KEYS.soundMuted) === 'true';
+}
+
+export function saveSoundMuted(isMuted, storage = window.localStorage) {
+  storage.setItem(STORAGE_KEYS.soundMuted, isMuted ? 'true' : 'false');
+}
+
+export function loadNickname(storage = window.localStorage) {
+  return storage.getItem(STORAGE_KEYS.nickname) ?? '';
+}
+
+export function saveNickname(nickname, storage = window.localStorage) {
+  const value = String(nickname ?? '').trim();
+  storage.setItem(STORAGE_KEYS.nickname, value);
+  return value;
 }
 
 function readNumber(storage, key) {

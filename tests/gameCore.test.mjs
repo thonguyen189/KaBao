@@ -1,11 +1,26 @@
 import assert from 'node:assert/strict';
 import {
+  calculateDiceBonus,
+  calculateDifficulty,
   createInitialState,
+  getMosquitoHitRadius,
   hitMosquito,
   insertTopRun,
+  updateComboAfterHit,
   spawnMosquitoes,
   updateTimer
 } from '../src/gameCore.js';
+import { GAME_SETTINGS } from '../src/settings.js';
+import { awardBonusCoins, loadNickname, saveMatchResult, saveNickname } from '../src/storage.js';
+import {
+  buildLeaderboardPayload,
+  buildPlayerProfilePayload,
+  buildPlayerRunPayload,
+  containsBlockedNicknameContent,
+  normalizeLeaderboardSnapshot,
+  normalizeNicknameForSafety,
+  validateNickname
+} from '../src/firebaseScores.js';
 
 function makeRandom(values) {
   let index = 0;
@@ -22,6 +37,24 @@ function test(name, fn) {
 }
 
 const results = [];
+
+results.push(test('createInitialState uses the 30 second default from settings', () => {
+  const state = createInitialState();
+
+  assert.equal(GAME_SETTINGS.durationSeconds, 30);
+  assert.equal(state.durationSeconds, 30);
+  assert.equal(state.remainingSeconds, 30);
+}));
+
+results.push(test('calculateDifficulty stays easy for the first 30 percent and reaches max at the end', () => {
+  assert.equal(calculateDifficulty(0, 30), 1);
+  assert.equal(calculateDifficulty(9, 30), 1);
+  assert.equal(calculateDifficulty(30, 30), GAME_SETTINGS.difficulty.maxMultiplier);
+}));
+
+results.push(test('getMosquitoHitRadius matches the rendered mosquito image radius', () => {
+  assert.equal(getMosquitoHitRadius(30), 32.25);
+}));
 
 results.push(test('spawnMosquitoes adds at most two per tick and caps alive mosquitoes at 20', () => {
   const state = createInitialState();
@@ -54,12 +87,43 @@ results.push(test('hitMosquito marks one flying mosquito as hit and increments s
     rotation: 0
   });
 
-  const hit = hitMosquito(state, 110, 125);
+  const hit = hitMosquito(state, 110, 125, { currentTimeSeconds: 1 });
 
   assert.equal(hit?.id, 'm1');
   assert.equal(state.score, 1);
   assert.equal(state.matchCoins, 1);
+  assert.equal(state.combo.current, 1);
+  assert.equal(state.combo.best, 1);
   assert.equal(state.mosquitoes[0].status, 'hit');
+}));
+
+results.push(test('hitMosquito accepts taps inside the rendered image bounds', () => {
+  const state = createInitialState();
+  state.mosquitoes.push({
+    id: 'm1',
+    x: 100,
+    y: 120,
+    radius: 30,
+    vx: 20,
+    vy: 15,
+    status: 'flying',
+    age: 0,
+    rotation: 0
+  });
+
+  const hit = hitMosquito(state, 132, 120, { currentTimeSeconds: 1 });
+
+  assert.equal(hit?.id, 'm1');
+  assert.equal(state.score, 1);
+}));
+
+results.push(test('updateComboAfterHit increments quick hits and resets after the combo window', () => {
+  const state = createInitialState();
+
+  assert.equal(updateComboAfterHit(state, 1), 1);
+  assert.equal(updateComboAfterHit(state, 1.5), 2);
+  assert.equal(updateComboAfterHit(state, 3), 1);
+  assert.equal(state.combo.best, 2);
 }));
 
 results.push(test('hitMosquito ignores missed taps and already hit mosquitoes', () => {
@@ -112,4 +176,134 @@ results.push(test('insertTopRun keeps the highest ten scores and returns one-bas
   assert.deepEqual(runs.map((run) => run.score), [10, 9, 8, 7, 7, 6, 5, 4, 3, 2]);
 }));
 
-nodeRepl.write(JSON.stringify({ passed: results.length, results }, null, 2));
+results.push(test('calculateDiceBonus multiplies match coins by the dice face', () => {
+  assert.equal(calculateDiceBonus(10, 4), 40);
+  assert.equal(calculateDiceBonus(0, 6), 0);
+}));
+
+results.push(test('saveMatchResult tracks played matches, new record, and rank metadata', () => {
+  const storage = makeStorage();
+  saveMatchResult({ score: 5, coins: 5, playedAt: '2026-06-14T00:00:00.000Z' }, storage);
+
+  const stats = saveMatchResult({ score: 8, coins: 8, playedAt: '2026-06-14T01:00:00.000Z' }, storage);
+
+  assert.equal(stats.playedMatches, 2);
+  assert.equal(stats.previousBestScore, 5);
+  assert.equal(stats.isNewRecord, true);
+  assert.equal(stats.latestRank, 1);
+}));
+
+results.push(test('awardBonusCoins only increases total coins and leaves top runs unchanged', () => {
+  const storage = makeStorage();
+  saveMatchResult({ score: 10, coins: 10, playedAt: '2026-06-14T00:00:00.000Z' }, storage);
+
+  const stats = awardBonusCoins(40, storage);
+
+  assert.equal(stats.totalCoins, 50);
+  assert.equal(stats.playedMatches, 1);
+  assert.equal(stats.topRuns.length, 1);
+  assert.equal(stats.topRuns[0].score, 10);
+}));
+
+results.push(test('loadNickname and saveNickname persist a trimmed safe nickname', () => {
+  const storage = makeStorage();
+
+  saveNickname('  Bé Vui  ', storage);
+
+  assert.equal(loadNickname(storage), 'Bé Vui');
+}));
+
+results.push(test('validateNickname accepts child-friendly Vietnamese and English names', () => {
+  assert.deepEqual(validateNickname('Bao Nhi'), { ok: true, value: 'Bao Nhi', reason: null });
+  assert.deepEqual(validateNickname('Ka_Bao'), { ok: true, value: 'Ka_Bao', reason: null });
+  assert.deepEqual(validateNickname('Bé Vui'), { ok: true, value: 'Bé Vui', reason: null });
+}));
+
+results.push(test('validateNickname rejects empty, long, and unsupported character names', () => {
+  assert.equal(validateNickname('   ').ok, false);
+  assert.equal(validateNickname('TenNguoiChoiQuaDai').ok, false);
+  assert.equal(validateNickname('Bao!').ok, false);
+}));
+
+results.push(test('nickname safety normalizes Vietnamese marks and blocks unsafe variants', () => {
+  assert.equal(normalizeNicknameForSafety('Đồ  Ngu'), 'do ngu');
+  assert.equal(containsBlockedNicknameContent(normalizeNicknameForSafety('đồ_n-g-u')), true);
+  assert.equal(validateNickname('bad word').ok, false);
+}));
+
+results.push(test('buildPlayerRunPayload creates a Realtime Database run record', () => {
+  const payload = buildPlayerRunPayload(
+    { score: 12.9, coins: 9.8, bestCombo: 4.2, playedAt: '2026-06-15T02:00:00.000Z' },
+    { uid: 'uid-1', savedAt: '2026-06-15T02:00:01.000Z' }
+  );
+
+  assert.deepEqual(payload, {
+    uid: 'uid-1',
+    score: 12,
+    coins: 9,
+    bestCombo: 4,
+    playedAt: '2026-06-15T02:00:00.000Z',
+    savedAt: '2026-06-15T02:00:01.000Z'
+  });
+}));
+
+results.push(test('buildPlayerProfilePayload creates a safe profile summary', () => {
+  const payload = buildPlayerProfilePayload(
+    { totalCoins: 42.9, playedMatches: 3.2, topRuns: [{ score: 12 }], latestRank: 2 },
+    { nickname: 'Bé Vui', updatedAt: '2026-06-15T02:00:01.000Z' }
+  );
+
+  assert.deepEqual(payload, {
+    nickname: 'Bé Vui',
+    totalCoins: 42,
+    playedMatches: 3,
+    bestScore: 12,
+    latestRank: 2,
+    updatedAt: '2026-06-15T02:00:01.000Z'
+  });
+}));
+
+results.push(test('buildLeaderboardPayload refuses unsafe nicknames and creates public rank data', () => {
+  assert.equal(buildLeaderboardPayload({ score: 1, coins: 1 }, {}, { uid: 'uid-1', nickname: 'bad word' }), null);
+
+  const payload = buildLeaderboardPayload(
+    { score: 12, coins: 9, bestCombo: 4, playedAt: '2026-06-15T02:00:00.000Z' },
+    {},
+    { uid: 'uid-1', nickname: 'Bé Vui', savedAt: '2026-06-15T02:00:01.000Z' }
+  );
+
+  assert.deepEqual(payload, {
+    uid: 'uid-1',
+    nickname: 'Bé Vui',
+    score: 12,
+    coins: 9,
+    bestCombo: 4,
+    playedAt: '2026-06-15T02:00:00.000Z',
+    savedAt: '2026-06-15T02:00:01.000Z'
+  });
+}));
+
+results.push(test('normalizeLeaderboardSnapshot returns top scores in descending order', () => {
+  const rows = normalizeLeaderboardSnapshot({
+    a: { nickname: 'A', score: 5, coins: 5, playedAt: '2026-06-15T01:00:00.000Z' },
+    b: { nickname: 'B', score: 12, coins: 9, playedAt: '2026-06-15T02:00:00.000Z' },
+    c: { nickname: 'C', score: 12, coins: 8, playedAt: '2026-06-15T00:00:00.000Z' }
+  });
+
+  assert.equal(JSON.stringify(rows.map((row) => row.nickname)), JSON.stringify(['C', 'B', 'A']));
+  assert.equal(JSON.stringify(rows.map((row) => row.rank)), JSON.stringify([1, 2, 3]));
+}));
+
+function makeStorage() {
+  const values = new Map();
+  return {
+    getItem(key) {
+      return values.has(key) ? values.get(key) : null;
+    },
+    setItem(key, value) {
+      values.set(key, String(value));
+    }
+  };
+}
+
+console.log(JSON.stringify({ passed: results.length, results }, null, 2));

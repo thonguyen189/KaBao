@@ -1,12 +1,6 @@
-export const GAME_CONFIG = {
-  durationSeconds: 120,
-  spawnPerSecond: 2,
-  maxMosquitoes: 20,
-  mosquitoRadius: 30,
-  minSpeed: 38,
-  maxSpeed: 92,
-  safePadding: 32
-};
+import { GAME_SETTINGS } from './settings.js';
+
+export const GAME_CONFIG = GAME_SETTINGS;
 
 let nextMosquitoId = 1;
 
@@ -19,7 +13,12 @@ export function createInitialState(options = {}) {
     matchCoins: 0,
     mosquitoes: [],
     elapsedSeconds: 0,
-    spawnCarry: 0
+    spawnCarry: 0,
+    combo: {
+      current: 0,
+      best: 0,
+      lastHitSeconds: null
+    }
   };
 }
 
@@ -30,7 +29,7 @@ export function spawnMosquitoes(state, options) {
 
   for (let index = 0; index < count; index += 1) {
     const radius = options.radius ?? GAME_CONFIG.mosquitoRadius;
-    const safePadding = Math.max(radius + 2, GAME_CONFIG.safePadding);
+    const safePadding = Math.max(getMosquitoHitRadius(radius) + 2, GAME_CONFIG.safePadding);
     const x = safePadding + random() * Math.max(1, options.playWidth - safePadding * 2);
     const y = safePadding + random() * Math.max(1, options.playHeight - safePadding * 2);
     const angle = random() * Math.PI * 2;
@@ -56,14 +55,14 @@ export function spawnMosquitoes(state, options) {
   return created;
 }
 
-export function hitMosquito(state, x, y) {
+export function hitMosquito(state, x, y, options = {}) {
   const mosquito = state.mosquitoes.find((candidate) => {
     if (candidate.status !== 'flying') {
       return false;
     }
     const dx = candidate.x - x;
     const dy = candidate.y - y;
-    return Math.hypot(dx, dy) <= candidate.radius;
+    return Math.hypot(dx, dy) <= getMosquitoHitRadius(candidate.radius);
   });
 
   if (!mosquito) {
@@ -76,7 +75,50 @@ export function hitMosquito(state, x, y) {
   mosquito.hitAge = 0;
   state.score += 1;
   state.matchCoins += 1;
+  mosquito.comboCount = updateComboAfterHit(
+    state,
+    options.currentTimeSeconds ?? state.elapsedSeconds
+  );
   return mosquito;
+}
+
+export function updateComboAfterHit(state, currentTimeSeconds) {
+  const previousHitSeconds = state.combo?.lastHitSeconds;
+  const comboWindow = GAME_CONFIG.combo.windowSeconds;
+  const isCombo =
+    typeof previousHitSeconds === 'number' &&
+    currentTimeSeconds - previousHitSeconds <= comboWindow;
+
+  state.combo = {
+    current: isCombo ? state.combo.current + 1 : 1,
+    best: Math.max(state.combo?.best ?? 0, isCombo ? state.combo.current + 1 : 1),
+    lastHitSeconds: currentTimeSeconds
+  };
+
+  return state.combo.current;
+}
+
+export function calculateDifficulty(elapsedSeconds, durationSeconds, settings = GAME_CONFIG) {
+  if (!durationSeconds || durationSeconds <= 0) {
+    return 1;
+  }
+
+  const progress = clamp(elapsedSeconds / durationSeconds, 0, 1);
+  const easyPortion = settings.difficulty.easyPortion;
+  if (progress <= easyPortion) {
+    return 1;
+  }
+
+  const hardProgress = (progress - easyPortion) / (1 - easyPortion);
+  return 1 + hardProgress * (settings.difficulty.maxMultiplier - 1);
+}
+
+export function calculateDiceBonus(matchCoins, diceFace) {
+  return Math.max(0, Math.floor(matchCoins)) * Math.max(0, Math.floor(diceFace));
+}
+
+export function getMosquitoHitRadius(radius, settings = GAME_CONFIG) {
+  return radius * settings.mosquitoHitRadiusMultiplier;
 }
 
 export function updateTimer(state, deltaSeconds) {
@@ -106,7 +148,7 @@ export function updateMosquitoes(state, deltaSeconds, bounds, random = Math.rand
       continue;
     }
 
-    const difficulty = 1 + Math.min(0.45, state.elapsedSeconds / 240);
+    const difficulty = calculateDifficulty(state.elapsedSeconds, state.durationSeconds);
     mosquito.x += mosquito.vx * deltaSeconds * difficulty;
     mosquito.y += mosquito.vy * deltaSeconds * difficulty;
 
@@ -142,8 +184,9 @@ export function accumulateSpawn(state, deltaSeconds, bounds, random = Math.rando
     return [];
   }
 
-  state.spawnCarry += deltaSeconds * GAME_CONFIG.spawnPerSecond;
-  const count = Math.min(2, Math.floor(state.spawnCarry));
+  const difficulty = calculateDifficulty(state.elapsedSeconds, state.durationSeconds);
+  state.spawnCarry += deltaSeconds * GAME_CONFIG.spawnPerSecond * difficulty;
+  const count = Math.min(3, Math.floor(state.spawnCarry));
   if (count <= 0) {
     return [];
   }
