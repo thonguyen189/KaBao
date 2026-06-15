@@ -1,8 +1,10 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import {
   calculateDiceBonus,
   calculateDifficulty,
   createInitialState,
+  getMosquitoFrameKey,
   getMosquitoHitRadius,
   hitMosquito,
   insertTopRun,
@@ -11,14 +13,37 @@ import {
   updateTimer
 } from '../src/gameCore.js';
 import { GAME_SETTINGS } from '../src/settings.js';
-import { awardBonusCoins, loadNickname, saveMatchResult, saveNickname } from '../src/storage.js';
+import {
+  awardBonusCoins,
+  loadEquippedItem,
+  loadInventory,
+  loadNickname,
+  loadStats,
+  loadTutorialSeen,
+  purchaseItem,
+  saveEquippedItem,
+  saveMatchResult,
+  saveNickname,
+  saveTutorialSeen
+} from '../src/storage.js';
+import { ITEM_CATALOG } from '../src/items.js';
+import {
+  applyMissionProgress,
+  claimMissionReward,
+  createMissionState,
+  getClaimableMissionIds
+} from '../src/missions.js';
 import {
   buildLeaderboardPayload,
   buildPlayerProfilePayload,
   buildPlayerRunPayload,
+  buildRoomLeaderboardPayload,
   containsBlockedNicknameContent,
   normalizeLeaderboardSnapshot,
+  normalizeRoomCode,
+  normalizeRoomLeaderboard,
   normalizeNicknameForSafety,
+  validateRoomCode,
   validateNickname
 } from '../src/firebaseScores.js';
 
@@ -54,6 +79,21 @@ results.push(test('calculateDifficulty stays easy for the first 30 percent and r
 
 results.push(test('getMosquitoHitRadius matches the rendered mosquito image radius', () => {
   assert.equal(getMosquitoHitRadius(30), 32.25);
+}));
+
+results.push(test('getMosquitoFrameKey cycles through all flying mosquito frames', () => {
+  assert.equal(getMosquitoFrameKey({ status: 'flying', age: 0 }), 'mosquitoFlying01');
+  assert.equal(getMosquitoFrameKey({ status: 'flying', age: 0.06 }), 'mosquitoFlying02');
+  assert.equal(getMosquitoFrameKey({ status: 'flying', age: 0.3 }), 'mosquitoFlying06');
+  assert.equal(getMosquitoFrameKey({ status: 'flying', age: 0.36 }), 'mosquitoFlying01');
+}));
+
+results.push(test('getMosquitoFrameKey plays hit frames before falling frames after a slap', () => {
+  assert.equal(getMosquitoFrameKey({ status: 'hit', hitAge: 0 }), 'mosquitoHit01');
+  assert.equal(getMosquitoFrameKey({ status: 'hit', hitAge: 0.08 }), 'mosquitoHit02');
+  assert.equal(getMosquitoFrameKey({ status: 'hit', hitAge: 0.16 }), 'mosquitoHit03');
+  assert.equal(getMosquitoFrameKey({ status: 'hit', hitAge: 0.24 }), 'mosquitoFalling01');
+  assert.equal(getMosquitoFrameKey({ status: 'hit', hitAge: 0.4 }), 'mosquitoFalling03');
 }));
 
 results.push(test('spawnMosquitoes adds at most two per tick and caps alive mosquitoes at 20', () => {
@@ -95,6 +135,14 @@ results.push(test('hitMosquito marks one flying mosquito as hit and increments s
   assert.equal(state.combo.current, 1);
   assert.equal(state.combo.best, 1);
   assert.equal(state.mosquitoes[0].status, 'hit');
+}));
+
+results.push(test('successful hits only create the impact image effect for the weapon visual', () => {
+  const mainSource = readFileSync(new URL('../src/main.js', import.meta.url), 'utf8');
+
+  assert.equal(mainSource.includes("effects.push({ type: 'weapon'"), false);
+  assert.equal(mainSource.includes("effect.type === 'weapon'"), false);
+  assert.equal(mainSource.includes("effects.push({ type: 'hit'"), true);
 }));
 
 results.push(test('hitMosquito accepts taps inside the rendered image bounds', () => {
@@ -158,22 +206,22 @@ results.push(test('updateTimer counts down and ends the match at zero', () => {
   assert.equal(state.phase, 'result');
 }));
 
-results.push(test('insertTopRun keeps the highest ten scores and returns one-based rank', () => {
-  const existing = Array.from({ length: 10 }, (_, index) => ({
-    score: 10 - index,
-    coins: 10 - index,
+results.push(test('insertTopRun keeps the highest five scores and returns one-based rank', () => {
+  const existing = Array.from({ length: 5 }, (_, index) => ({
+    score: 5 - index,
+    coins: 5 - index,
     playedAt: `2026-06-14T00:00:0${index}.000Z`
   }));
 
   const { runs, rank } = insertTopRun(existing, {
-    score: 7,
-    coins: 7,
+    score: 3,
+    coins: 3,
     playedAt: '2026-06-14T01:00:00.000Z'
   });
 
-  assert.equal(runs.length, 10);
-  assert.equal(rank, 5);
-  assert.deepEqual(runs.map((run) => run.score), [10, 9, 8, 7, 7, 6, 5, 4, 3, 2]);
+  assert.equal(runs.length, 5);
+  assert.equal(rank, 4);
+  assert.deepEqual(runs.map((run) => run.score), [5, 4, 3, 3, 2]);
 }));
 
 results.push(test('calculateDiceBonus multiplies match coins by the dice face', () => {
@@ -203,6 +251,53 @@ results.push(test('awardBonusCoins only increases total coins and leaves top run
   assert.equal(stats.playedMatches, 1);
   assert.equal(stats.topRuns.length, 1);
   assert.equal(stats.topRuns[0].score, 10);
+}));
+
+results.push(test('inventory falls back to slipper and buying items spends coins once', () => {
+  const storage = makeStorage();
+  storage.setItem('kabao.totalCoins', '100');
+  storage.setItem('kabao.inventory', 'not-json');
+
+  assert.deepEqual(loadInventory(storage), ['slipper']);
+  assert.equal(loadEquippedItem(storage), 'slipper');
+  assert.equal(ITEM_CATALOG.swatter.price, 80);
+
+  const bought = purchaseItem('swatter', storage);
+  assert.equal(bought.ok, true);
+  assert.equal(bought.totalCoins, 20);
+  assert.deepEqual(loadInventory(storage), ['slipper', 'swatter']);
+
+  const duplicate = purchaseItem('swatter', storage);
+  assert.equal(duplicate.ok, false);
+  assert.equal(duplicate.reason, 'owned');
+  assert.equal(loadStats(storage).totalCoins, 20);
+}));
+
+results.push(test('equipped item only accepts owned catalog items and tutorial state persists', () => {
+  const storage = makeStorage();
+  storage.setItem('kabao.inventory', JSON.stringify(['slipper', 'notebook']));
+
+  assert.equal(saveEquippedItem('phone', storage), 'slipper');
+  assert.equal(saveEquippedItem('notebook', storage), 'notebook');
+  assert.equal(loadEquippedItem(storage), 'notebook');
+  assert.equal(loadTutorialSeen(storage), false);
+  saveTutorialSeen(true, storage);
+  assert.equal(loadTutorialSeen(storage), true);
+}));
+
+results.push(test('daily missions track progress and claim each reward once', () => {
+  let missions = createMissionState('2026-06-15');
+
+  missions = applyMissionProgress(missions, 'hit_20_mosquitoes', 8);
+  missions = applyMissionProgress(missions, 'hit_20_mosquitoes', 15);
+  missions = applyMissionProgress(missions, 'play_one_match', 1);
+  assert.deepEqual(getClaimableMissionIds(missions), ['play_one_match', 'hit_20_mosquitoes']);
+
+  const claimed = claimMissionReward(missions, 'hit_20_mosquitoes');
+  assert.equal(claimed.ok, true);
+  assert.equal(claimed.reward, 20);
+  assert.equal(claimed.state.claimed.hit_20_mosquitoes, true);
+  assert.equal(claimMissionReward(claimed.state, 'hit_20_mosquitoes').ok, false);
 }));
 
 results.push(test('loadNickname and saveNickname persist a trimmed safe nickname', () => {
@@ -283,15 +378,76 @@ results.push(test('buildLeaderboardPayload refuses unsafe nicknames and creates 
   });
 }));
 
-results.push(test('normalizeLeaderboardSnapshot returns top scores in descending order', () => {
+results.push(test('normalizeLeaderboardSnapshot returns the top five scores in descending order by default', () => {
   const rows = normalizeLeaderboardSnapshot({
     a: { nickname: 'A', score: 5, coins: 5, playedAt: '2026-06-15T01:00:00.000Z' },
     b: { nickname: 'B', score: 12, coins: 9, playedAt: '2026-06-15T02:00:00.000Z' },
-    c: { nickname: 'C', score: 12, coins: 8, playedAt: '2026-06-15T00:00:00.000Z' }
+    c: { nickname: 'C', score: 12, coins: 8, playedAt: '2026-06-15T00:00:00.000Z' },
+    d: { nickname: 'D', score: 7, coins: 7, playedAt: '2026-06-15T00:00:00.000Z' },
+    e: { nickname: 'E', score: 6, coins: 6, playedAt: '2026-06-15T00:00:00.000Z' },
+    f: { nickname: 'F', score: 4, coins: 4, playedAt: '2026-06-15T00:00:00.000Z' }
   });
 
-  assert.equal(JSON.stringify(rows.map((row) => row.nickname)), JSON.stringify(['C', 'B', 'A']));
-  assert.equal(JSON.stringify(rows.map((row) => row.rank)), JSON.stringify([1, 2, 3]));
+  assert.equal(JSON.stringify(rows.map((row) => row.nickname)), JSON.stringify(['C', 'B', 'D', 'E', 'A']));
+  assert.equal(JSON.stringify(rows.map((row) => row.rank)), JSON.stringify([1, 2, 3, 4, 5]));
+}));
+
+results.push(test('main UI requests and messages refer to top 5 leaderboards', () => {
+  const mainSource = readFileSync(new URL('../src/main.js', import.meta.url), 'utf8');
+
+  assert.equal(mainSource.includes('limit: 10'), false);
+  assert.equal(mainSource.includes('top 10'), false);
+  assert.equal(mainSource.includes('limit: 5'), true);
+  assert.equal(mainSource.includes('top 5'), true);
+}));
+
+results.push(test('room codes normalize safely and room leaderboard keeps best entry per player', () => {
+  assert.equal(normalizeRoomCode(' ab-12 '), 'AB12');
+  assert.equal(validateRoomCode('AB12').ok, false);
+  assert.equal(validateRoomCode('KAB27').ok, true);
+
+  const payload = buildRoomLeaderboardPayload(
+    { score: 12, coins: 9, bestCombo: 4, playedAt: '2026-06-15T02:00:00.000Z' },
+    { uid: 'uid-1', nickname: 'Bé Vui', savedAt: '2026-06-15T02:00:01.000Z' }
+  );
+
+  assert.deepEqual(payload, {
+    uid: 'uid-1',
+    nickname: 'Bé Vui',
+    score: 12,
+    coins: 9,
+    bestCombo: 4,
+    playedAt: '2026-06-15T02:00:00.000Z',
+    savedAt: '2026-06-15T02:00:01.000Z'
+  });
+
+  const rows = normalizeRoomLeaderboard({
+    a: { nickname: 'A', score: 5, coins: 5, playedAt: '2026-06-15T01:00:00.000Z' },
+    b: { nickname: 'B', score: 12, coins: 9, playedAt: '2026-06-15T02:00:00.000Z' }
+  });
+  assert.equal(rows[0].nickname, 'B');
+  assert.equal(rows[0].rank, 1);
+}));
+
+results.push(test('Realtime Database rules protect leaderboard writes and keep score indexed', () => {
+  const rules = JSON.parse(readFileSync(new URL('../database.rules.json', import.meta.url), 'utf8'));
+  const leaderboard = rules.rules.leaderboard;
+  const leaderboardRows = leaderboard.$scoreId;
+  const rooms = rules.rules.rooms;
+  const dailyMissions = rules.rules.players.$uid.dailyMissions;
+
+  assert.equal(rules.rules['.read'], false);
+  assert.equal(rules.rules['.write'], false);
+  assert.equal(leaderboard['.read'], true);
+  assert.equal(leaderboard['.indexOn'], 'score');
+  assert.equal(leaderboardRows['.write'], "auth != null && !data.exists() && newData.child('uid').val() === auth.uid");
+  assert.ok(leaderboardRows['.validate'].includes("newData.hasChildren(['uid', 'nickname', 'score', 'coins', 'bestCombo', 'playedAt', 'savedAt'])"));
+  assert.ok(leaderboardRows.uid['.validate'].includes('auth.uid'));
+  assert.ok(leaderboardRows.nickname['.validate'].includes('newData.val().length <= 16'));
+  assert.ok(leaderboardRows.score['.validate'].includes('newData.val() >= 0'));
+  assert.equal(rooms.$roomCode.leaderboard['.indexOn'], 'score');
+  assert.ok(rooms.$roomCode.leaderboard.$uid['.write'].includes('auth.uid === $uid'));
+  assert.ok(dailyMissions.$date['.write'].includes('auth.uid === $uid'));
 }));
 
 function makeStorage() {

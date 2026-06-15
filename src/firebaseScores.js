@@ -1,4 +1,4 @@
-const FIREBASE_CONFIG = {
+const firebaseConfig = {
   apiKey: 'AIzaSyCh1lG2cJWbK3zrkSEGhuir-Bg0AQbZtJs',
   authDomain: 'kabao-13f31.firebaseapp.com',
   databaseURL: 'https://kabao-13f31-default-rtdb.firebaseio.com',
@@ -48,6 +48,7 @@ const BLOCKED_TERMS = [
 ];
 
 let firebasePromise = null;
+const LEADERBOARD_LIMIT = 5;
 
 export function validateNickname(nickname) {
   const value = String(nickname ?? '').trim().replace(/\s+/g, ' ');
@@ -138,7 +139,48 @@ export function buildLeaderboardPayload(result, stats = {}, options = {}) {
   };
 }
 
-export function normalizeLeaderboardSnapshot(value, limit = 10) {
+export function normalizeRoomCode(roomCode) {
+  return String(roomCode ?? '')
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, '')
+    .slice(0, 6);
+}
+
+export function validateRoomCode(roomCode) {
+  const value = normalizeRoomCode(roomCode);
+  if (value.length < 5 || value.length > 6) {
+    return { ok: false, value, reason: 'length' };
+  }
+  return { ok: true, value, reason: null };
+}
+
+export function generateRoomCode(random = Math.random) {
+  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for (let index = 0; index < 5; index += 1) {
+    code += alphabet[Math.floor(random() * alphabet.length)];
+  }
+  return code;
+}
+
+export function buildRoomLeaderboardPayload(result, options = {}) {
+  const validation = validateNickname(options.nickname);
+  if (!validation.ok) {
+    return null;
+  }
+
+  return {
+    uid: options.uid,
+    nickname: validation.value,
+    score: toSafeInteger(result.score),
+    coins: toSafeInteger(result.coins),
+    bestCombo: toSafeInteger(result.bestCombo ?? 0),
+    playedAt: options.playedAt ?? result.playedAt ?? new Date().toISOString(),
+    savedAt: options.savedAt ?? new Date().toISOString()
+  };
+}
+
+export function normalizeLeaderboardSnapshot(value, limit = LEADERBOARD_LIMIT) {
   return Object.entries(value ?? {})
     .map(([id, row]) => ({
       id,
@@ -153,6 +195,8 @@ export function normalizeLeaderboardSnapshot(value, limit = 10) {
     .slice(0, limit)
     .map((row, index) => ({ ...row, rank: index + 1 }));
 }
+
+export const normalizeRoomLeaderboard = normalizeLeaderboardSnapshot;
 
 export async function savePlayerInfo(result, stats, options = {}) {
   const { uid, database, dbModule } = await getRealtimeDatabaseClient();
@@ -183,8 +227,112 @@ export async function savePlayerProfile(stats, options = {}) {
   return profile;
 }
 
+export async function getServerDateInfo() {
+  const { database, dbModule } = await getRealtimeDatabaseClient();
+  const snapshot = await dbModule.get(dbModule.ref(database, '.info/serverTimeOffset'));
+  const offset = Number(snapshot.val()) || 0;
+  const now = new Date(Date.now() + offset);
+  const date = now.toISOString().slice(0, 10);
+  return { date, now: now.toISOString() };
+}
+
+export async function loadDailyMissionState(date, createDefaultState) {
+  const { uid, database, dbModule } = await getRealtimeDatabaseClient();
+  const snapshot = await dbModule.get(dbModule.ref(database, `players/${uid}/dailyMissions/${date}`));
+  const value = snapshot.val();
+  return createDefaultState(date, value ?? {});
+}
+
+export async function saveDailyMissionState(state) {
+  const { uid, database, dbModule } = await getRealtimeDatabaseClient();
+  const savedAt = new Date().toISOString();
+  const payload = {
+    progress: state.progress ?? {},
+    claimed: state.claimed ?? {},
+    updatedAt: savedAt
+  };
+  await dbModule.update(dbModule.ref(database, `players/${uid}/dailyMissions/${state.date}`), payload);
+  return { ...state, updatedAt: savedAt };
+}
+
+export async function createOrJoinRoom(roomCode, options = {}) {
+  const validation = validateRoomCode(roomCode || generateRoomCode(options.random));
+  if (!validation.ok) {
+    throw new Error('invalid-room-code');
+  }
+
+  const nicknameValidation = validateNickname(options.nickname);
+  if (!nicknameValidation.ok) {
+    throw new Error('invalid-nickname');
+  }
+
+  const { uid, database, dbModule } = await getRealtimeDatabaseClient();
+  const now = options.now ?? new Date().toISOString();
+  const code = validation.value;
+  await dbModule.update(dbModule.ref(database, `rooms/${code}/meta`), {
+    code,
+    createdBy: uid,
+    createdAt: now,
+    lastPlayedAt: now
+  });
+  await dbModule.update(dbModule.ref(database, `rooms/${code}/members/${uid}`), {
+    nickname: nicknameValidation.value,
+    joinedAt: now
+  });
+  return { code, uid, nickname: nicknameValidation.value };
+}
+
+export async function saveRoomResult(roomCode, result, options = {}) {
+  const validation = validateRoomCode(roomCode);
+  if (!validation.ok) {
+    return null;
+  }
+
+  const { uid, database, dbModule } = await getRealtimeDatabaseClient();
+  const savedAt = options.savedAt ?? new Date().toISOString();
+  const payload = buildRoomLeaderboardPayload(result, {
+    uid,
+    nickname: options.nickname,
+    savedAt
+  });
+  if (!payload) {
+    return null;
+  }
+
+  const currentSnapshot = await dbModule.get(
+    dbModule.ref(database, `rooms/${validation.value}/leaderboard/${uid}`)
+  );
+  const current = currentSnapshot.val();
+  if (current && toSafeInteger(current.score) > payload.score) {
+    return current;
+  }
+
+  await dbModule.update(dbModule.ref(database, `rooms/${validation.value}/meta`), {
+    lastPlayedAt: savedAt
+  });
+  await dbModule.set(dbModule.ref(database, `rooms/${validation.value}/leaderboard/${uid}`), payload);
+  return payload;
+}
+
+export async function loadRoomLeaderboard(roomCode, options = {}) {
+  const validation = validateRoomCode(roomCode);
+  if (!validation.ok) {
+    return [];
+  }
+
+  const limit = options.limit ?? LEADERBOARD_LIMIT;
+  const { database, dbModule } = await getRealtimeDatabaseClient();
+  const roomRef = dbModule.query(
+    dbModule.ref(database, `rooms/${validation.value}/leaderboard`),
+    dbModule.orderByChild('score'),
+    dbModule.limitToLast(limit)
+  );
+  const snapshot = await dbModule.get(roomRef);
+  return normalizeRoomLeaderboard(snapshot.val(), limit);
+}
+
 export async function loadGlobalLeaderboard(options = {}) {
-  const limit = options.limit ?? 10;
+  const limit = options.limit ?? LEADERBOARD_LIMIT;
   const { database, dbModule } = await getRealtimeDatabaseClient();
   const leaderboardRef = dbModule.query(
     dbModule.ref(database, 'leaderboard'),
@@ -202,7 +350,7 @@ async function getRealtimeDatabaseClient() {
       import(FIREBASE_AUTH_URL),
       import(FIREBASE_DATABASE_URL)
     ]).then(async ([appModule, authModule, dbModule]) => {
-      const app = appModule.initializeApp(FIREBASE_CONFIG);
+      const app = appModule.initializeApp(firebaseConfig);
       const auth = authModule.getAuth(app);
       const credential = auth.currentUser
         ? { user: auth.currentUser }

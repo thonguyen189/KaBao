@@ -1,0 +1,189 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "leaderboard": {
+      ".read": true,
+      ".indexOn": "score",
+      "$scoreId": {
+        ".write": "auth != null && !data.exists() && newData.child('uid').val() === auth.uid",
+        ".validate": "newData.hasChildren(['uid', 'nickname', 'score', 'coins', 'bestCombo', 'playedAt', 'savedAt']) && newData.getChildrenCount() === 7",
+        "uid": {
+          ".validate": "newData.isString() && newData.val() === auth.uid"
+        },
+        "nickname": {
+          ".validate": "newData.isString() && newData.val().length >= 2 && newData.val().length <= 16"
+        },
+        "score": {
+          ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 10000"
+        },
+        "coins": {
+          ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 10000"
+        },
+        "bestCombo": {
+          ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1000"
+        },
+        "playedAt": {
+          ".validate": "newData.isString() && newData.val().length >= 20 && newData.val().length <= 30"
+        },
+        "savedAt": {
+          ".validate": "newData.isString() && newData.val().length >= 20 && newData.val().length <= 30"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "players": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid",
+        "profile": {
+          ".validate": "newData.hasChildren(['nickname', 'totalCoins', 'playedMatches', 'bestScore', 'updatedAt']) && newData.getChildrenCount() <= 6",
+          "nickname": {
+            ".validate": "newData.isString() && newData.val().length <= 16"
+          },
+          "totalCoins": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1000000"
+          },
+          "playedMatches": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100000"
+          },
+          "bestScore": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 10000"
+          },
+          "latestRank": {
+            ".validate": "newData.val() === null || (newData.isNumber() && newData.val() >= 1 && newData.val() <= 100000)"
+          },
+          "updatedAt": {
+            ".validate": "newData.isString() && newData.val().length >= 20 && newData.val().length <= 30"
+          },
+          "$other": {
+            ".validate": false
+          }
+        },
+        "runs": {
+          "$runId": {
+            ".validate": "newData.hasChildren(['uid', 'score', 'coins', 'bestCombo', 'playedAt', 'savedAt']) && newData.getChildrenCount() === 6",
+            "uid": {
+              ".validate": "newData.isString() && newData.val() === auth.uid"
+            },
+            "score": {
+              ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 10000"
+            },
+            "coins": {
+              ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 10000"
+            },
+            "bestCombo": {
+              ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1000"
+            },
+            "playedAt": {
+              ".validate": "newData.isString() && newData.val().length >= 20 && newData.val().length <= 30"
+            },
+            "savedAt": {
+              ".validate": "newData.isString() && newData.val().length >= 20 && newData.val().length <= 30"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        },
+        "dailyMissions": {
+          "$date": {
+            ".write": "auth != null && auth.uid === $uid",
+            ".validate": "newData.hasChildren(['progress', 'claimed', 'updatedAt']) && newData.getChildrenCount() === 3",
+            "progress": {
+              "$missionId": {
+                ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1000"
+              }
+            },
+            "claimed": {
+              "$missionId": {
+                ".validate": "newData.isBoolean()"
+              }
+            },
+            "updatedAt": {
+              ".validate": "newData.isString() && newData.val().length >= 20 && newData.val().length <= 30"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "rooms": {
+      "$roomCode": {
+        ".read": true,
+        "meta": {
+          ".write": "auth != null",
+          ".validate": "newData.hasChildren(['code', 'createdBy', 'createdAt', 'lastPlayedAt']) && newData.getChildrenCount() === 4",
+          "code": {
+            ".validate": "newData.isString() && newData.val() === $roomCode && newData.val().matches(/^[A-Z0-9]{5,6}$/)"
+          },
+          "createdBy": {
+            ".validate": "newData.isString()"
+          },
+          "createdAt": {
+            ".validate": "newData.isString() && newData.val().length >= 20 && newData.val().length <= 30"
+          },
+          "lastPlayedAt": {
+            ".validate": "newData.isString() && newData.val().length >= 20 && newData.val().length <= 30"
+          },
+          "$other": {
+            ".validate": false
+          }
+        },
+        "members": {
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid",
+            ".validate": "newData.hasChildren(['nickname', 'joinedAt']) && newData.getChildrenCount() === 2",
+            "nickname": {
+              ".validate": "newData.isString() && newData.val().length >= 2 && newData.val().length <= 16"
+            },
+            "joinedAt": {
+              ".validate": "newData.isString() && newData.val().length >= 20 && newData.val().length <= 30"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        },
+        "leaderboard": {
+          ".indexOn": "score",
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid",
+            ".validate": "newData.hasChildren(['uid', 'nickname', 'score', 'coins', 'bestCombo', 'playedAt', 'savedAt']) && newData.getChildrenCount() === 7",
+            "uid": {
+              ".validate": "newData.isString() && newData.val() === auth.uid"
+            },
+            "nickname": {
+              ".validate": "newData.isString() && newData.val().length >= 2 && newData.val().length <= 16"
+            },
+            "score": {
+              ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 10000"
+            },
+            "coins": {
+              ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 10000"
+            },
+            "bestCombo": {
+              ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 1000"
+            },
+            "playedAt": {
+              ".validate": "newData.isString() && newData.val().length >= 20 && newData.val().length <= 30"
+            },
+            "savedAt": {
+              ".validate": "newData.isString() && newData.val().length >= 20 && newData.val().length <= 30"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        }
+      }
+    }
+  }
+}

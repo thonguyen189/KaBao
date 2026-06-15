@@ -1,11 +1,16 @@
 import { insertTopRun } from './gameCore.js';
+import { DEFAULT_ITEM_ID, ITEM_CATALOG, isKnownItem } from './items.js';
 
 const STORAGE_KEYS = {
   totalCoins: 'kabao.totalCoins',
   topRuns: 'kabao.topRuns',
   playedMatches: 'kabao.playedMatches',
   soundMuted: 'kabao.soundMuted',
-  nickname: 'kabao.nickname'
+  nickname: 'kabao.nickname',
+  inventory: 'kabao.inventory',
+  equippedItem: 'kabao.equippedItem',
+  tutorialSeen: 'kabao.tutorialSeen',
+  lastRoomCode: 'kabao.lastRoomCode'
 };
 
 export function loadStats(storage = window.localStorage) {
@@ -51,6 +56,96 @@ export function awardBonusCoins(amount, storage = window.localStorage) {
 
   storage.setItem(STORAGE_KEYS.totalCoins, String(nextStats.totalCoins));
   return nextStats;
+}
+
+export function spendCoins(amount, storage = window.localStorage) {
+  const stats = loadStats(storage);
+  const cost = Math.max(0, Math.floor(amount));
+  if (stats.totalCoins < cost) {
+    return { ok: false, reason: 'coins', totalCoins: stats.totalCoins };
+  }
+
+  const totalCoins = stats.totalCoins - cost;
+  storage.setItem(STORAGE_KEYS.totalCoins, String(totalCoins));
+  return { ok: true, reason: null, totalCoins };
+}
+
+export function loadInventory(storage = window.localStorage) {
+  const saved = readJson(storage, STORAGE_KEYS.inventory, []);
+  const inventory = Array.isArray(saved)
+    ? saved.filter((itemId, index, array) =>
+        typeof itemId === 'string' && isKnownItem(itemId) && array.indexOf(itemId) === index
+      )
+    : [];
+
+  return inventory.includes(DEFAULT_ITEM_ID)
+    ? inventory
+    : [DEFAULT_ITEM_ID, ...inventory];
+}
+
+export function saveInventory(inventory, storage = window.localStorage) {
+  const normalized = Array.isArray(inventory)
+    ? inventory.filter((itemId, index, array) =>
+        typeof itemId === 'string' && isKnownItem(itemId) && array.indexOf(itemId) === index
+      )
+    : [];
+  const nextInventory = normalized.includes(DEFAULT_ITEM_ID)
+    ? normalized
+    : [DEFAULT_ITEM_ID, ...normalized];
+  storage.setItem(STORAGE_KEYS.inventory, JSON.stringify(nextInventory));
+  return nextInventory;
+}
+
+export function loadEquippedItem(storage = window.localStorage) {
+  const inventory = loadInventory(storage);
+  const equipped = storage.getItem(STORAGE_KEYS.equippedItem);
+  return inventory.includes(equipped) && isKnownItem(equipped) ? equipped : DEFAULT_ITEM_ID;
+}
+
+export function saveEquippedItem(itemId, storage = window.localStorage) {
+  const inventory = loadInventory(storage);
+  const value = inventory.includes(itemId) && isKnownItem(itemId) ? itemId : DEFAULT_ITEM_ID;
+  storage.setItem(STORAGE_KEYS.equippedItem, value);
+  return value;
+}
+
+export function purchaseItem(itemId, storage = window.localStorage, catalog = ITEM_CATALOG) {
+  if (!isKnownItem(itemId)) {
+    return { ok: false, reason: 'unknown', totalCoins: loadStats(storage).totalCoins };
+  }
+
+  const inventory = loadInventory(storage);
+  if (inventory.includes(itemId)) {
+    return { ok: false, reason: 'owned', totalCoins: loadStats(storage).totalCoins };
+  }
+
+  const item = catalog?.[itemId] ?? null;
+  const cost = item?.price ?? 0;
+  const spent = spendCoins(cost, storage);
+  if (!spent.ok) {
+    return { ok: false, reason: 'coins', totalCoins: spent.totalCoins };
+  }
+
+  saveInventory([...inventory, itemId], storage);
+  return { ok: true, reason: null, totalCoins: spent.totalCoins };
+}
+
+export function loadTutorialSeen(storage = window.localStorage) {
+  return storage.getItem(STORAGE_KEYS.tutorialSeen) === 'true';
+}
+
+export function saveTutorialSeen(seen, storage = window.localStorage) {
+  storage.setItem(STORAGE_KEYS.tutorialSeen, seen ? 'true' : 'false');
+}
+
+export function loadLastRoomCode(storage = window.localStorage) {
+  return storage.getItem(STORAGE_KEYS.lastRoomCode) ?? '';
+}
+
+export function saveLastRoomCode(roomCode, storage = window.localStorage) {
+  const value = String(roomCode ?? '').trim().toUpperCase();
+  storage.setItem(STORAGE_KEYS.lastRoomCode, value);
+  return value;
 }
 
 export function loadSoundMuted(storage = window.localStorage) {

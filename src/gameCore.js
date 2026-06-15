@@ -1,6 +1,7 @@
 import { GAME_SETTINGS } from './settings.js';
 
 export const GAME_CONFIG = GAME_SETTINGS;
+export const TOP_RUN_LIMIT = 5;
 
 let nextMosquitoId = 1;
 
@@ -121,6 +122,33 @@ export function getMosquitoHitRadius(radius, settings = GAME_CONFIG) {
   return radius * settings.mosquitoHitRadiusMultiplier;
 }
 
+export function getMosquitoFrameKey(mosquito) {
+  const flyingFrames = [
+    'mosquitoFlying01',
+    'mosquitoFlying02',
+    'mosquitoFlying03',
+    'mosquitoFlying04',
+    'mosquitoFlying05',
+    'mosquitoFlying06'
+  ];
+  const hitFrames = ['mosquitoHit01', 'mosquitoHit02', 'mosquitoHit03'];
+  const fallingFrames = ['mosquitoFalling01', 'mosquitoFalling02', 'mosquitoFalling03'];
+
+  if (mosquito.status === 'hit') {
+    const hitAge = Math.max(0, mosquito.hitAge ?? 0);
+    const hitDuration = hitFrames.length * 0.08;
+    if (hitAge < hitDuration) {
+      return hitFrames[Math.min(hitFrames.length - 1, Math.floor(hitAge / 0.08))];
+    }
+
+    const fallingAge = hitAge - hitDuration;
+    return fallingFrames[Math.min(fallingFrames.length - 1, Math.floor(fallingAge / 0.08))];
+  }
+
+  const age = Math.max(0, mosquito.age ?? 0);
+  return flyingFrames[Math.floor(age / 0.06) % flyingFrames.length];
+}
+
 export function updateTimer(state, deltaSeconds) {
   if (state.phase !== 'playing') {
     return state.remainingSeconds;
@@ -203,7 +231,7 @@ export function accumulateSpawn(state, deltaSeconds, bounds, random = Math.rando
 export function insertTopRun(existingRuns, run) {
   const runs = [...existingRuns, run]
     .sort((a, b) => b.score - a.score || new Date(a.playedAt) - new Date(b.playedAt))
-    .slice(0, 10);
+    .slice(0, TOP_RUN_LIMIT);
   const rankIndex = runs.findIndex((candidate) => candidate === run);
 
   return {
