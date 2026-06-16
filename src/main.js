@@ -329,16 +329,15 @@ function handleCanvasTap(event) {
     return;
   }
 
-  effects.push({ type: 'hit', itemId: equippedItemId, x: hit.x, y: hit.y, age: 0, life: 0.55 });
-  effects.push({ type: 'coin', x: hit.x, y: hit.y - 8, age: 0, life: 0.75 });
+  effects.push({ type: 'hit', itemId: equippedItemId, x: hit.x, y: hit.y, age: 0, life: 0.24 });
   if (hit.comboCount >= GAME_SETTINGS.combo.minDisplayCount) {
     effects.push({
       type: 'combo',
-      text: `Combo x${hit.comboCount}`,
+      text: `Combo x${hit.comboCount}  +${hit.comboCount} xu`,
       x: hit.x,
-      y: hit.y - 34,
+      y: hit.y - 58,
       age: 0,
-      life: 0.72
+      life: 0.58
     });
   }
   playGameSound(assets.sounds.slapHit, { volume: 0.4 });
@@ -349,11 +348,8 @@ function handleCanvasTap(event) {
 function updateEffects(deltaSeconds) {
   for (const effect of effects) {
     effect.age += deltaSeconds;
-    if (effect.type === 'coin') {
-      effect.y -= 38 * deltaSeconds;
-    }
     if (effect.type === 'combo') {
-      effect.y -= 24 * deltaSeconds;
+      effect.y -= 30 * deltaSeconds;
     }
   }
 
@@ -449,17 +445,6 @@ function drawEffect(effect) {
     const size = 92 + progress * 26;
     if (burst) {
       context.drawImage(burst, effect.x - size / 2, effect.y - size / 2, size, size);
-    }
-  }
-
-  if (effect.type === 'coin') {
-    const popup = assets.images.plusOneCoin;
-    if (popup) {
-      context.drawImage(popup, effect.x - 34, effect.y - 34, 68, 68);
-    } else {
-      context.fillStyle = '#d89100';
-      context.font = '900 28px sans-serif';
-      context.fillText('+1 xu', effect.x - 34, effect.y);
     }
   }
 

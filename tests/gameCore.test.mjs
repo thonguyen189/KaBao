@@ -137,12 +137,51 @@ results.push(test('hitMosquito marks one flying mosquito as hit and increments s
   assert.equal(state.mosquitoes[0].status, 'hit');
 }));
 
+results.push(test('hitMosquito awards coins equal to the current combo count', () => {
+  const state = createInitialState();
+  state.mosquitoes.push(
+    {
+      id: 'm1',
+      x: 100,
+      y: 120,
+      radius: 32,
+      vx: 20,
+      vy: 15,
+      status: 'flying',
+      age: 0,
+      rotation: 0
+    },
+    {
+      id: 'm2',
+      x: 180,
+      y: 140,
+      radius: 32,
+      vx: 20,
+      vy: 15,
+      status: 'flying',
+      age: 0,
+      rotation: 0
+    }
+  );
+
+  const firstHit = hitMosquito(state, 100, 120, { currentTimeSeconds: 1 });
+  const secondHit = hitMosquito(state, 180, 140, { currentTimeSeconds: 1.4 });
+
+  assert.equal(firstHit?.comboCount, 1);
+  assert.equal(secondHit?.comboCount, 2);
+  assert.equal(state.score, 2);
+  assert.equal(state.matchCoins, 3);
+}));
+
 results.push(test('successful hits only create the impact image effect for the weapon visual', () => {
   const mainSource = readFileSync(new URL('../src/main.js', import.meta.url), 'utf8');
 
   assert.equal(mainSource.includes("effects.push({ type: 'weapon'"), false);
   assert.equal(mainSource.includes("effect.type === 'weapon'"), false);
   assert.equal(mainSource.includes("effects.push({ type: 'hit'"), true);
+  assert.equal(mainSource.includes('life: 0.24'), true);
+  assert.equal(mainSource.includes("effects.push({ type: 'coin'"), false);
+  assert.equal(mainSource.includes("effect.type === 'coin'"), false);
 }));
 
 results.push(test('hitMosquito accepts taps inside the rendered image bounds', () => {

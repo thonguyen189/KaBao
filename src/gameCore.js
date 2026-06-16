@@ -75,11 +75,11 @@ export function hitMosquito(state, x, y, options = {}) {
   mosquito.vy = 160;
   mosquito.hitAge = 0;
   state.score += 1;
-  state.matchCoins += 1;
   mosquito.comboCount = updateComboAfterHit(
     state,
     options.currentTimeSeconds ?? state.elapsedSeconds
   );
+  state.matchCoins += mosquito.comboCount;
   return mosquito;
 }
 
