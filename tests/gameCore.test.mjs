@@ -21,6 +21,7 @@ import {
   loadStats,
   loadTutorialSeen,
   purchaseItem,
+  resetLocalAccountData,
   saveEquippedItem,
   saveMatchResult,
   saveNickname,
@@ -347,6 +348,31 @@ results.push(test('loadNickname and saveNickname persist a trimmed safe nickname
   assert.equal(loadNickname(storage), 'Bé Vui');
 }));
 
+results.push(test('resetLocalAccountData clears profile progress and keeps sound preference', () => {
+  const storage = makeStorage();
+  storage.setItem('kabao.totalCoins', '100');
+  storage.setItem('kabao.topRuns', JSON.stringify([{ score: 9, coins: 9 }]));
+  storage.setItem('kabao.playedMatches', '4');
+  storage.setItem('kabao.nickname', 'Bé Vui');
+  storage.setItem('kabao.inventory', JSON.stringify(['slipper', 'swatter']));
+  storage.setItem('kabao.equippedItem', 'swatter');
+  storage.setItem('kabao.tutorialSeen', 'true');
+  storage.setItem('kabao.lastRoomCode', 'KAB27');
+  storage.setItem('kabao.soundMuted', 'true');
+  storage.setItem('other.app', 'still-here');
+
+  resetLocalAccountData(storage);
+
+  assert.deepEqual(loadStats(storage), { totalCoins: 0, topRuns: [], playedMatches: 0 });
+  assert.equal(loadNickname(storage), '');
+  assert.deepEqual(loadInventory(storage), ['slipper']);
+  assert.equal(loadEquippedItem(storage), 'slipper');
+  assert.equal(loadTutorialSeen(storage), false);
+  assert.equal(storage.getItem('kabao.lastRoomCode'), null);
+  assert.equal(storage.getItem('kabao.soundMuted'), 'true');
+  assert.equal(storage.getItem('other.app'), 'still-here');
+}));
+
 results.push(test('validateNickname accepts child-friendly Vietnamese and English names', () => {
   assert.deepEqual(validateNickname('Bao Nhi'), { ok: true, value: 'Bao Nhi', reason: null });
   assert.deepEqual(validateNickname('Ka_Bao'), { ok: true, value: 'Ka_Bao', reason: null });
@@ -440,6 +466,21 @@ results.push(test('main UI requests and messages refer to top 5 leaderboards', (
   assert.equal(mainSource.includes('top 5'), true);
 }));
 
+results.push(test('v1.2 account UI moves nickname creation to startup settings flow', () => {
+  const htmlSource = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+  const mainSource = readFileSync(new URL('../src/main.js', import.meta.url), 'utf8');
+
+  assert.equal(htmlSource.includes('id="accountScreen"'), true);
+  assert.equal(htmlSource.includes('id="settingsScreen"'), true);
+  assert.equal(htmlSource.includes('id="settingsButton"'), true);
+  assert.equal(htmlSource.includes('id="settingsSoundButton"'), true);
+  assert.equal(htmlSource.includes('id="resetAccountButton"'), true);
+  assert.equal(mainSource.includes('ensureNicknameGate'), true);
+  assert.equal(mainSource.includes('handleAccountSubmit'), true);
+  assert.equal(mainSource.includes('handleResetAccount'), true);
+  assert.equal(mainSource.includes('resetLocalAccountData'), true);
+}));
+
 results.push(test('room codes normalize safely and room leaderboard keeps best entry per player', () => {
   assert.equal(normalizeRoomCode(' ab-12 '), 'AB12');
   assert.equal(validateRoomCode('AB12').ok, false);
@@ -497,6 +538,9 @@ function makeStorage() {
     },
     setItem(key, value) {
       values.set(key, String(value));
+    },
+    removeItem(key) {
+      values.delete(key);
     }
   };
 }

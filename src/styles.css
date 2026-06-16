@@ -69,6 +69,7 @@ button {
 
 .menu-screen,
 .panel-screen,
+.account-screen,
 .tutorial-screen,
 .result-screen {
   flex-direction: column;
@@ -114,6 +115,7 @@ button {
 .panel-message,
 .nickname-help,
 .nickname-error,
+.nickname-summary,
 .dice-copy {
   margin: 0;
   color: var(--muted);
@@ -122,15 +124,17 @@ button {
 
 .status-strip {
   display: grid;
-  grid-template-columns: 1.25fr 1fr;
+  grid-template-columns: 1fr 1.15fr 1fr;
   gap: 10px;
 }
 
 .coin-total,
 .equipped-pill,
+.player-pill,
 .best-list,
 .result-panel,
 .tutorial-card,
+.account-card,
 .room-form,
 .item-card,
 .mission-card,
@@ -142,7 +146,8 @@ button {
 }
 
 .coin-total,
-.equipped-pill {
+.equipped-pill,
+.player-pill {
   display: grid;
   align-items: center;
   min-height: 62px;
@@ -161,12 +166,14 @@ button {
 }
 
 .equipped-pill span,
+.player-pill span,
 .coin-total span {
   color: var(--muted);
   font-size: 0.82rem;
 }
 
 .equipped-pill strong,
+.player-pill strong,
 .coin-total strong {
   font-size: 1.35rem;
 }
@@ -423,6 +430,10 @@ button {
   justify-content: center;
 }
 
+.account-screen {
+  justify-content: center;
+}
+
 .tutorial-card {
   display: grid;
   gap: 12px;
@@ -435,6 +446,75 @@ button {
   height: 230px;
   margin: 0 auto;
   object-fit: contain;
+}
+
+.account-card {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+}
+
+.account-card h1 {
+  margin: 0;
+  font-size: 2rem;
+  line-height: 0.95;
+}
+
+.account-logo {
+  display: block;
+  width: min(74vw, 300px);
+  max-height: 180px;
+  margin: 0 auto;
+  object-fit: contain;
+}
+
+.settings-panel {
+  display: grid;
+  gap: 10px;
+}
+
+.setting-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  border: 3px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  background: var(--panel);
+  box-shadow: 0 8px 0 rgba(36, 31, 26, 0.1);
+}
+
+.setting-row span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.setting-label {
+  margin: 0 0 4px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
+.setting-row strong {
+  font-size: 1.35rem;
+}
+
+.setting-row .sound-toggle,
+.danger-action {
+  min-width: 112px;
+}
+
+.setting-row--danger {
+  border-color: rgba(227, 68, 54, 0.34);
+}
+
+.danger-action {
+  color: #ffffff;
+  background: linear-gradient(180deg, #ff766b, #d73328);
 }
 
 .gameplay-screen {
@@ -662,6 +742,15 @@ button {
   .leaderboard-grid,
   .status-strip {
     grid-template-columns: 1fr;
+  }
+
+  .setting-row {
+    grid-template-columns: 1fr;
+  }
+
+  .setting-row .sound-toggle,
+  .danger-action {
+    width: 100%;
   }
 
   .best-list {

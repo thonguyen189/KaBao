@@ -42,6 +42,7 @@ import {
   loadStats,
   loadTutorialSeen,
   purchaseItem,
+  resetLocalAccountData,
   saveEquippedItem,
   saveLastRoomCode,
   saveNickname,
@@ -52,7 +53,9 @@ import {
 
 const elements = {
   screens: Array.from(document.querySelectorAll('.screen')),
+  accountScreen: document.querySelector('#accountScreen'),
   menuScreen: document.querySelector('#menuScreen'),
+  settingsScreen: document.querySelector('#settingsScreen'),
   shopScreen: document.querySelector('#shopScreen'),
   inventoryScreen: document.querySelector('#inventoryScreen'),
   missionsScreen: document.querySelector('#missionsScreen'),
@@ -67,15 +70,21 @@ const elements = {
   inventoryButton: document.querySelector('#inventoryButton'),
   missionsButton: document.querySelector('#missionsButton'),
   friendsButton: document.querySelector('#friendsButton'),
+  settingsButton: document.querySelector('#settingsButton'),
   tutorialButton: document.querySelector('#tutorialButton'),
   missionNotify: document.querySelector('#missionNotify'),
   menuSoundButton: document.querySelector('#menuSoundButton'),
   gameSoundButton: document.querySelector('#gameSoundButton'),
   resultSoundButton: document.querySelector('#resultSoundButton'),
+  settingsSoundButton: document.querySelector('#settingsSoundButton'),
+  accountForm: document.querySelector('#accountForm'),
+  accountNicknameInput: document.querySelector('#accountNicknameInput'),
+  accountNicknameError: document.querySelector('#accountNicknameError'),
   scoreValue: document.querySelector('#scoreValue'),
   coinValue: document.querySelector('#coinValue'),
   timerValue: document.querySelector('#timerValue'),
   menuTotalCoins: document.querySelector('#menuTotalCoins'),
+  menuNickname: document.querySelector('#menuNickname'),
   menuEquippedItem: document.querySelector('#menuEquippedItem'),
   menuTopRuns: document.querySelector('#menuTopRuns'),
   globalTopRuns: document.querySelector('#globalTopRuns'),
@@ -102,6 +111,10 @@ const elements = {
   nicknameForm: document.querySelector('#nicknameForm'),
   nicknameInput: document.querySelector('#nicknameInput'),
   nicknameError: document.querySelector('#nicknameError'),
+  resultNicknameSummary: document.querySelector('#resultNicknameSummary'),
+  settingsNickname: document.querySelector('#settingsNickname'),
+  resetAccountButton: document.querySelector('#resetAccountButton'),
+  settingsMessage: document.querySelector('#settingsMessage'),
   resultScore: document.querySelector('#resultScore'),
   resultMosquitoes: document.querySelector('#resultMosquitoes'),
   resultCoins: document.querySelector('#resultCoins'),
@@ -167,6 +180,10 @@ async function boot() {
   resizeCanvas();
   requestAnimationFrame(gameLoop);
 
+  if (!ensureNicknameGate()) {
+    return;
+  }
+
   if (!loadTutorialSeen()) {
     openTutorial();
   }
@@ -188,6 +205,10 @@ function bindEvents() {
     renderMissions();
     showScreen(elements.missionsScreen);
   });
+  elements.settingsButton.addEventListener('click', () => {
+    renderSettings();
+    showScreen(elements.settingsScreen);
+  });
   elements.tutorialButton.addEventListener('click', openTutorial);
   elements.tutorialNextButton.addEventListener('click', nextTutorialStep);
   elements.tutorialSkipButton.addEventListener('click', closeTutorial);
@@ -198,7 +219,9 @@ function bindEvents() {
     button.addEventListener('click', toggleSound);
   }
   elements.diceButton.addEventListener('click', rollResultDice);
+  elements.accountForm.addEventListener('submit', handleAccountSubmit);
   elements.nicknameForm.addEventListener('submit', handleNicknameSubmit);
+  elements.resetAccountButton.addEventListener('click', handleResetAccount);
   elements.canvas.addEventListener('pointerdown', handleCanvasTap);
   window.addEventListener('resize', resizeCanvas);
 }
@@ -209,6 +232,43 @@ function showScreen(screen) {
   }
 }
 
+function ensureNicknameGate() {
+  const nickname = loadNickname();
+  if (validateNickname(nickname).ok) {
+    return true;
+  }
+
+  elements.accountNicknameInput.value = '';
+  elements.accountNicknameError.textContent = '';
+  showScreen(elements.accountScreen);
+  return false;
+}
+
+function continueAfterNicknameCreated() {
+  renderMenu();
+  renderSettings();
+  if (!loadTutorialSeen()) {
+    openTutorial();
+    return;
+  }
+  showScreen(elements.menuScreen);
+}
+
+function handleAccountSubmit(event) {
+  event.preventDefault();
+  const validation = validateNickname(elements.accountNicknameInput.value);
+
+  if (!validation.ok) {
+    elements.accountNicknameError.textContent = 'Tên này chưa phù hợp, hãy chọn tên vui vẻ hơn nhé.';
+    return;
+  }
+
+  saveNickname(validation.value);
+  elements.accountNicknameInput.value = validation.value;
+  elements.accountNicknameError.textContent = '';
+  continueAfterNicknameCreated();
+}
+
 function showMenu() {
   stopBuzz();
   state = null;
@@ -216,11 +276,18 @@ function showMenu() {
   diceRolled = false;
   latestResultStats = null;
   pendingCloudSave = null;
+  if (!ensureNicknameGate()) {
+    return;
+  }
   renderMenu();
   showScreen(elements.menuScreen);
 }
 
 function startGame() {
+  if (!ensureNicknameGate()) {
+    return;
+  }
+
   state = createInitialState();
   effects.length = 0;
   savedResult = false;
@@ -483,11 +550,18 @@ function updateHud() {
 function renderMenu() {
   const stats = loadStats();
   const item = getItem(loadEquippedItem());
+  elements.menuNickname.textContent = loadNickname() || 'Bạn nhỏ';
   elements.menuTotalCoins.textContent = stats.totalCoins;
   elements.menuEquippedItem.textContent = item.shortName;
   renderLocalRuns(stats);
   renderGlobalLeaderboard();
   renderMissionNotify();
+}
+
+function renderSettings(message = '') {
+  elements.settingsNickname.textContent = loadNickname() || 'Bạn nhỏ';
+  elements.settingsMessage.textContent = message;
+  updateSoundButtons();
 }
 
 function renderLocalRuns(stats) {
@@ -875,9 +949,12 @@ function closeTutorial() {
 
 function renderNicknameForm() {
   const nickname = loadNickname();
+  elements.resultNicknameSummary.textContent = nickname
+    ? `Đang chơi với tên ${nickname}.`
+    : 'Hãy tạo nickname trước khi lưu bảng xếp hạng.';
   elements.nicknameInput.value = nickname;
   elements.nicknameError.textContent = '';
-  elements.nicknameForm.classList.toggle('is-hidden', Boolean(nickname));
+  elements.nicknameForm.classList.add('is-hidden');
 }
 
 function handleNicknameSubmit(event) {
@@ -996,11 +1073,43 @@ function rollResultDice() {
   playGameSound(assets.sounds.coinCollect, { volume: 0.32 });
 }
 
+function handleResetAccount() {
+  const confirmed = window.confirm(
+    'Đổi nickname sẽ xóa xu, vật phẩm, lịch sử chơi và dữ liệu lưu trên máy này. Bạn có chắc không?'
+  );
+
+  if (!confirmed) {
+    renderSettings('Đã giữ nguyên nickname và dữ liệu hiện tại.');
+    return;
+  }
+
+  resetLocalAccountData();
+  state = null;
+  effects.length = 0;
+  savedResult = false;
+  diceRolled = false;
+  latestResultStats = null;
+  pendingCloudSave = null;
+  equippedItemId = loadEquippedItem();
+  activeRoomCode = '';
+  matchRoomCode = '';
+  dailyMissionState = null;
+  dailyOnline = false;
+  tutorialIndex = 0;
+  stopBuzz();
+  renderMenu();
+  renderShop();
+  renderInventory();
+  renderMissions();
+  ensureNicknameGate();
+}
+
 function soundButtons() {
   return [
     elements.menuSoundButton,
     elements.gameSoundButton,
-    elements.resultSoundButton
+    elements.resultSoundButton,
+    elements.settingsSoundButton
   ].filter(Boolean);
 }
 

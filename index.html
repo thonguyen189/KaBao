@@ -9,12 +9,33 @@
   </head>
   <body>
     <main class="app" aria-live="polite">
+      <section class="screen account-screen" id="accountScreen">
+        <article class="account-card">
+          <img class="account-logo" src="assets/lip/Logo Game.png" alt="Logo Đập muỗi cùng Ka Báo">
+          <p class="eyebrow">Tạo tài khoản</p>
+          <h1>Tên của bạn là gì?</h1>
+          <form class="nickname-form" id="accountForm" novalidate>
+            <label for="accountNicknameInput">Nickname của bạn</label>
+            <div class="nickname-row">
+              <input id="accountNicknameInput" name="nickname" type="text" maxlength="16" autocomplete="nickname" placeholder="VD: Bé Vui">
+              <button class="secondary-action nickname-submit" type="submit">Bắt đầu</button>
+            </div>
+            <p class="nickname-help">Dùng 2-16 ký tự vui vẻ, không dùng từ thô tục hay nhạy cảm.</p>
+            <p class="nickname-error" id="accountNicknameError" role="alert"></p>
+          </form>
+        </article>
+      </section>
+
       <section class="screen menu-screen is-active" id="menuScreen">
         <header class="menu-hero">
           <img class="hero-mascot" src="assets/lip/Logo Game.png" alt="Logo Đập muỗi cùng Ka Báo">
         </header>
 
         <div class="status-strip">
+          <div class="player-pill">
+            <span>Nickname</span>
+            <strong id="menuNickname">Bạn nhỏ</strong>
+          </div>
           <div class="coin-total">
             <img src="assets/lip/UI Pack_Assets/asset_07.png" alt="" aria-hidden="true">
             <span>Tổng xu</span>
@@ -35,9 +56,9 @@
             Nhiệm vụ
             <span class="notify-dot is-hidden" id="missionNotify" aria-hidden="true"></span>
           </button>
+          <button class="secondary-action" id="settingsButton" type="button">Thiết lập</button>
           <button class="secondary-action" id="tutorialButton" type="button">Hướng dẫn</button>
         </nav>
-        <button class="sound-toggle" id="menuSoundButton" type="button" aria-pressed="false">Âm thanh</button>
 
         <div class="leaderboard-grid">
           <div class="best-list">
@@ -49,6 +70,39 @@
             <ol id="globalTopRuns"></ol>
           </div>
         </div>
+      </section>
+
+      <section class="screen panel-screen" id="settingsScreen">
+        <header class="panel-header">
+          <div>
+            <p class="eyebrow">Thiết lập</p>
+            <h1>Tài khoản & âm thanh</h1>
+          </div>
+          <button class="icon-action" data-home type="button" aria-label="Về menu">⌂</button>
+        </header>
+        <section class="settings-panel">
+          <div class="setting-row">
+            <div>
+              <p class="setting-label">Nickname hiện tại</p>
+              <strong id="settingsNickname">Bạn nhỏ</strong>
+            </div>
+          </div>
+          <div class="setting-row">
+            <div>
+              <p class="setting-label">Âm thanh</p>
+              <span>Bật hoặc tắt nhạc và hiệu ứng.</span>
+            </div>
+            <button class="sound-toggle" id="settingsSoundButton" type="button" aria-pressed="false">Âm thanh</button>
+          </div>
+          <div class="setting-row setting-row--danger">
+            <div>
+              <p class="setting-label">Tạo lại nickname</p>
+              <span>Xóa dữ liệu lưu trên máy này và nhập nickname mới.</span>
+            </div>
+            <button class="secondary-action danger-action" id="resetAccountButton" type="button">Tạo lại</button>
+          </div>
+          <p class="panel-message" id="settingsMessage"></p>
+        </section>
       </section>
 
       <section class="screen panel-screen" id="shopScreen">
@@ -152,6 +206,7 @@
           <button class="sound-toggle sound-toggle--result" id="resultSoundButton" type="button" aria-pressed="false">Âm thanh</button>
           <p class="rank-message" id="rankMessage"></p>
           <div class="result-badges" id="resultBadges" aria-live="polite"></div>
+          <p class="nickname-summary" id="resultNicknameSummary"></p>
 
           <form class="nickname-form" id="nicknameForm" novalidate>
             <label for="nicknameInput">Nickname của bạn</label>

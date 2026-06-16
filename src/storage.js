@@ -166,6 +166,23 @@ export function saveNickname(nickname, storage = window.localStorage) {
   return value;
 }
 
+export function resetLocalAccountData(storage = window.localStorage) {
+  const keysToRemove = [
+    STORAGE_KEYS.totalCoins,
+    STORAGE_KEYS.topRuns,
+    STORAGE_KEYS.playedMatches,
+    STORAGE_KEYS.nickname,
+    STORAGE_KEYS.inventory,
+    STORAGE_KEYS.equippedItem,
+    STORAGE_KEYS.tutorialSeen,
+    STORAGE_KEYS.lastRoomCode
+  ];
+
+  for (const key of keysToRemove) {
+    storage.removeItem(key);
+  }
+}
+
 function readNumber(storage, key) {
   const value = Number(storage.getItem(key));
   return Number.isFinite(value) && value > 0 ? value : 0;
