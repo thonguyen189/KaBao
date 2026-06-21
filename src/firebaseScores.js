@@ -122,6 +122,14 @@ export function buildPlayerProfilePayload(stats, options = {}) {
   };
 }
 
+export function buildServerDateInfo(offset = 0, nowMs = Date.now()) {
+  const now = new Date(nowMs + (Number(offset) || 0));
+  return {
+    date: now.toISOString().slice(0, 10),
+    now: now.toISOString()
+  };
+}
+
 export function buildLeaderboardPayload(result, stats = {}, options = {}) {
   const validation = validateNickname(options.nickname);
   if (!validation.ok) {
@@ -229,11 +237,9 @@ export async function savePlayerProfile(stats, options = {}) {
 
 export async function getServerDateInfo() {
   const { database, dbModule } = await getRealtimeDatabaseClient();
-  const snapshot = await dbModule.get(dbModule.ref(database, '.info/serverTimeOffset'));
-  const offset = Number(snapshot.val()) || 0;
-  const now = new Date(Date.now() + offset);
-  const date = now.toISOString().slice(0, 10);
-  return { date, now: now.toISOString() };
+  const offsetRef = dbModule.ref(database, '.info/serverTimeOffset');
+  const snapshot = await readRealtimeValueOnce(dbModule, offsetRef);
+  return buildServerDateInfo(snapshot.val());
 }
 
 export async function loadDailyMissionState(date, createDefaultState) {
@@ -366,6 +372,37 @@ async function getRealtimeDatabaseClient() {
   }
 
   return firebasePromise;
+}
+
+function readRealtimeValueOnce(dbModule, dbRef, timeoutMs = 8000) {
+  return new Promise((resolve, reject) => {
+    let unsubscribe = null;
+    const timeoutId = setTimeout(() => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+      reject(new Error('server-timeout'));
+    }, timeoutMs);
+
+    unsubscribe = dbModule.onValue(
+      dbRef,
+      (snapshot) => {
+        clearTimeout(timeoutId);
+        if (unsubscribe) {
+          unsubscribe();
+        }
+        resolve(snapshot);
+      },
+      (error) => {
+        clearTimeout(timeoutId);
+        if (unsubscribe) {
+          unsubscribe();
+        }
+        reject(error);
+      },
+      { onlyOnce: true }
+    );
+  });
 }
 
 function toSafeInteger(value) {

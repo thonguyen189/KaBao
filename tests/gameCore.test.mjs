@@ -29,15 +29,19 @@ import {
 } from '../src/storage.js';
 import { ITEM_CATALOG } from '../src/items.js';
 import {
+  DAILY_MISSIONS,
+  DAILY_MISSION_IDS,
   applyMissionProgress,
   claimMissionReward,
   createMissionState,
-  getClaimableMissionIds
+  getClaimableMissionIds,
+  getMissionPanelStatus
 } from '../src/missions.js';
 import {
   buildLeaderboardPayload,
   buildPlayerProfilePayload,
   buildPlayerRunPayload,
+  buildServerDateInfo,
   buildRoomLeaderboardPayload,
   containsBlockedNicknameContent,
   normalizeLeaderboardSnapshot,
@@ -325,19 +329,49 @@ results.push(test('equipped item only accepts owned catalog items and tutorial s
   assert.equal(loadTutorialSeen(storage), true);
 }));
 
-results.push(test('daily missions track progress and claim each reward once', () => {
-  let missions = createMissionState('2026-06-15');
+results.push(test('daily challenges expose two child-friendly goals and claim each reward once', () => {
+  assert.deepEqual(DAILY_MISSION_IDS, ['play_one_match', 'hit_20_mosquitoes']);
+  assert.equal(DAILY_MISSIONS.play_one_match.title, 'Khởi động nhanh');
+  assert.equal(DAILY_MISSIONS.play_one_match.target, 1);
+  assert.equal(DAILY_MISSIONS.play_one_match.reward, 15);
+  assert.equal(DAILY_MISSIONS.hit_20_mosquitoes.title, 'Tay nhanh mắt sáng');
+  assert.equal(DAILY_MISSIONS.hit_20_mosquitoes.target, 10);
+  assert.equal(DAILY_MISSIONS.hit_20_mosquitoes.reward, 20);
 
-  missions = applyMissionProgress(missions, 'hit_20_mosquitoes', 8);
-  missions = applyMissionProgress(missions, 'hit_20_mosquitoes', 15);
-  missions = applyMissionProgress(missions, 'play_one_match', 1);
-  assert.deepEqual(getClaimableMissionIds(missions), ['play_one_match', 'hit_20_mosquitoes']);
+  let challenges = createMissionState('2026-06-15');
 
-  const claimed = claimMissionReward(missions, 'hit_20_mosquitoes');
+  challenges = applyMissionProgress(challenges, 'hit_20_mosquitoes', 8);
+  assert.deepEqual(getClaimableMissionIds(challenges), []);
+  challenges = applyMissionProgress(challenges, 'hit_20_mosquitoes', 2);
+  challenges = applyMissionProgress(challenges, 'play_one_match', 1);
+  assert.deepEqual(getClaimableMissionIds(challenges), ['play_one_match', 'hit_20_mosquitoes']);
+
+  const claimed = claimMissionReward(challenges, 'hit_20_mosquitoes');
   assert.equal(claimed.ok, true);
   assert.equal(claimed.reward, 20);
   assert.equal(claimed.state.claimed.hit_20_mosquitoes, true);
   assert.equal(claimMissionReward(claimed.state, 'hit_20_mosquitoes').ok, false);
+}));
+
+results.push(test('daily challenge panel keeps loading separate from offline error state', () => {
+  assert.deepEqual(getMissionPanelStatus({ isLoading: true, isOnline: false, state: null }), {
+    message: 'Đang tải thử thách...',
+    showList: false
+  });
+
+  assert.deepEqual(getMissionPanelStatus({ isLoading: false, isOnline: false, state: null }), {
+    message: 'Chưa tải được thử thách online. Bạn vẫn có thể chơi cá nhân.',
+    showList: false
+  });
+
+  assert.deepEqual(getMissionPanelStatus({
+    isLoading: false,
+    isOnline: true,
+    state: createMissionState('2026-06-15')
+  }), {
+    message: 'Hoàn thành thử thách nhỏ ngày 2026-06-15 để nhận xu.',
+    showList: true
+  });
 }));
 
 results.push(test('loadNickname and saveNickname persist a trimmed safe nickname', () => {
@@ -423,6 +457,13 @@ results.push(test('buildPlayerProfilePayload creates a safe profile summary', ()
   });
 }));
 
+results.push(test('buildServerDateInfo derives the daily challenge date from server offset', () => {
+  assert.deepEqual(buildServerDateInfo(60_000, Date.UTC(2026, 5, 20, 23, 59, 30)), {
+    date: '2026-06-21',
+    now: '2026-06-21T00:00:30.000Z'
+  });
+}));
+
 results.push(test('buildLeaderboardPayload refuses unsafe nicknames and creates public rank data', () => {
   assert.equal(buildLeaderboardPayload({ score: 1, coins: 1 }, {}, { uid: 'uid-1', nickname: 'bad word' }), null);
 
@@ -479,6 +520,17 @@ results.push(test('v1.2 account UI moves nickname creation to startup settings f
   assert.equal(mainSource.includes('handleAccountSubmit'), true);
   assert.equal(mainSource.includes('handleResetAccount'), true);
   assert.equal(mainSource.includes('resetLocalAccountData'), true);
+}));
+
+results.push(test('v1.3 challenge UI replaces player-facing mission text', () => {
+  const htmlSource = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+  const mainSource = readFileSync(new URL('../src/main.js', import.meta.url), 'utf8');
+
+  assert.equal(htmlSource.includes('Thử thách'), true);
+  assert.equal(htmlSource.includes('Nhiệm vụ'), false);
+  assert.equal(mainSource.includes('thử thách'), true);
+  assert.equal(mainSource.includes('nhiệm vụ online'), false);
+  assert.equal(mainSource.includes('nhiệm vụ hằng ngày'), false);
 }));
 
 results.push(test('room codes normalize safely and room leaderboard keeps best entry per player', () => {

@@ -16,7 +16,8 @@ import {
   applyMissionProgress,
   claimMissionReward,
   createMissionState,
-  getClaimableMissionIds
+  getClaimableMissionIds,
+  getMissionPanelStatus
 } from './missions.js';
 import {
   createOrJoinRoom,
@@ -164,6 +165,7 @@ let activeRoomCode = '';
 let matchRoomCode = '';
 let dailyMissionState = null;
 let dailyOnline = false;
+let dailyLoading = true;
 let tutorialIndex = 0;
 
 boot();
@@ -700,29 +702,38 @@ function assetPathForFrame(frameKey) {
 }
 
 async function initializeDailyMissions() {
+  dailyLoading = true;
+  renderMissions();
+
   try {
     const server = await getServerDateInfo();
     dailyMissionState = await loadDailyMissionState(server.date, createMissionState);
-    dailyMissionState = applyMissionProgress(dailyMissionState, 'daily_login', 1);
     dailyMissionState = await saveDailyMissionState(dailyMissionState);
     dailyOnline = true;
+    dailyLoading = false;
     renderMissions();
     renderMissionNotify();
   } catch (error) {
     dailyOnline = false;
-    elements.missionsMessage.textContent = 'Chưa tải được nhiệm vụ online. Bạn vẫn có thể chơi cá nhân.';
-    console.warn('Không thể tải nhiệm vụ hằng ngày.', error);
+    dailyLoading = false;
+    renderMissions();
+    console.warn('Không thể tải thử thách hằng ngày.', error);
   }
 }
 
 function renderMissions() {
-  if (!dailyOnline || !dailyMissionState) {
-    elements.missionsMessage.textContent = 'Nhiệm vụ dùng thời gian Firebase/server và cần kết nối mạng.';
+  const panelStatus = getMissionPanelStatus({
+    isLoading: dailyLoading,
+    isOnline: dailyOnline,
+    state: dailyMissionState
+  });
+  elements.missionsMessage.textContent = panelStatus.message;
+
+  if (!panelStatus.showList) {
     elements.missionList.innerHTML = '';
     return;
   }
 
-  elements.missionsMessage.textContent = `Nhiệm vụ ngày ${dailyMissionState.date}.`;
   elements.missionList.replaceChildren(...DAILY_MISSION_IDS.map((missionId) => {
     const mission = DAILY_MISSIONS[missionId];
     const progress = dailyMissionState.progress[missionId] ?? 0;
@@ -774,8 +785,8 @@ async function updateDailyProgress(increments) {
     renderMissions();
   } catch (error) {
     dailyOnline = false;
-    elements.missionsMessage.textContent = 'Không lưu được nhiệm vụ online.';
-    console.warn('Không thể lưu nhiệm vụ hằng ngày.', error);
+    renderMissions();
+    console.warn('Không thể lưu thử thách hằng ngày.', error);
   }
 }
 
@@ -1065,7 +1076,6 @@ function rollResultDice() {
     }
   }
 
-  void updateDailyProgress({ roll_dice: 1 });
   elements.diceButton.disabled = true;
   elements.diceButton.textContent = String(face);
   elements.diceBonusValue.textContent = bonus;
@@ -1096,12 +1106,14 @@ function handleResetAccount() {
   matchRoomCode = '';
   dailyMissionState = null;
   dailyOnline = false;
+  dailyLoading = true;
   tutorialIndex = 0;
   stopBuzz();
   renderMenu();
   renderShop();
   renderInventory();
   renderMissions();
+  void initializeDailyMissions();
   ensureNicknameGate();
 }
 

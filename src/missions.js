@@ -1,39 +1,23 @@
 export const DAILY_MISSIONS = {
-  daily_login: {
-    id: 'daily_login',
-    title: 'Điểm danh hôm nay',
-    target: 1,
-    reward: 10,
-    unit: 'lần'
-  },
   play_one_match: {
     id: 'play_one_match',
-    title: 'Chơi một trận',
+    title: 'Khởi động nhanh',
     target: 1,
     reward: 15,
     unit: 'trận'
   },
   hit_20_mosquitoes: {
     id: 'hit_20_mosquitoes',
-    title: 'Đập 20 muỗi',
-    target: 20,
+    title: 'Tay nhanh mắt sáng',
+    target: 10,
     reward: 20,
     unit: 'muỗi'
-  },
-  roll_dice: {
-    id: 'roll_dice',
-    title: 'Tung xúc xắc',
-    target: 1,
-    reward: 10,
-    unit: 'lần'
   }
 };
 
 export const DAILY_MISSION_IDS = [
-  'daily_login',
   'play_one_match',
-  'hit_20_mosquitoes',
-  'roll_dice'
+  'hit_20_mosquitoes'
 ];
 
 export function createMissionState(date, existing = {}) {
@@ -101,6 +85,27 @@ export function getClaimableMissionIds(state) {
     const mission = DAILY_MISSIONS[id];
     return !state.claimed?.[id] && (state.progress?.[id] ?? 0) >= mission.target;
   });
+}
+
+export function getMissionPanelStatus({ isLoading, isOnline, state }) {
+  if (isLoading) {
+    return {
+      message: 'Đang tải thử thách...',
+      showList: false
+    };
+  }
+
+  if (!isOnline || !state) {
+    return {
+      message: 'Chưa tải được thử thách online. Bạn vẫn có thể chơi cá nhân.',
+      showList: false
+    };
+  }
+
+  return {
+    message: `Hoàn thành thử thách nhỏ ngày ${state.date} để nhận xu.`,
+    showList: true
+  };
 }
 
 function clampProgress(value, target) {
