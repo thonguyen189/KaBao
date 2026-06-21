@@ -1,1212 +1,421 @@
 {
-  "generated_at": "2026-06-19T14:17:25.823Z",
-  "app": {
-    "name": "KaBao",
-    "url": "http://127.0.0.1:4173/",
-    "source_root": "e:/thont/Khác/Game/KaBao"
-  },
-  "capture_policy": {
-    "viewport": "mobile portrait 390x844",
-    "includes_hidden_sections": true,
-    "hidden_sections_note": "friendsScreen was forced visible because its menu button has is-hidden/aria-hidden.",
-    "local_storage_seeded": true
-  },
-  "screens": [
+  "updated_at": "2026-06-21",
+  "purpose": "Map UI chỉ giữ mô tả hành động và thông tin liên quan đến icon.",
+  "global_icons": [
     {
-      "id": "01-account-create",
-      "name": "Tạo nickname",
-      "screenshot": "docs/ui-screenshots/01-account-create.png",
-      "viewport": {
-        "width": 390,
-        "height": 844,
-        "profile": "mobile portrait"
-      },
-      "screen_id": "accountScreen",
-      "dom_class": "screen account-screen is-active",
-      "active_screen_size": {
-        "width": 390,
-        "height": 844
-      },
-      "acquisition": "normal navigation",
-      "description_vi": "Màn tạo tài khoản với logo, tiêu đề, input nickname và nút Bắt đầu.",
-      "visible_text": [
-        "TẠO TÀI KHOẢN",
-        "Tên của bạn là gì?",
-        "Nickname của bạn",
-        "Bắt đầu",
-        "Tên 2-16 ký tự."
-      ],
-      "controls": [
-        {
-          "tag": "input",
-          "id": "accountNicknameInput",
-          "className": "",
-          "text": "VD: Bé Vui",
-          "disabled": false,
-          "ariaLabel": ""
-        },
-        {
-          "tag": "button",
-          "id": "",
-          "className": "secondary-action nickname-submit",
-          "text": "Bắt đầu",
-          "disabled": false,
-          "ariaLabel": ""
-        }
-      ],
-      "image_assets": [
-        {
-          "src": "assets/lip/branding/logo-game.png",
-          "alt": "Logo Đập muỗi cùng Ka Báo"
-        }
-      ],
-      "responsive_check": {
-        "horizontal_overflow_candidates": []
-      },
-      "ui_edit_brief": {
-        "purpose": "Người chơi mới nhập nickname lần đầu.",
-        "primary_regions": [
-          "account-card",
-          "account-logo",
-          "nickname-form"
-        ],
-        "likely_edit_targets": [
-          "logo sizing",
-          "form spacing",
-          "button style",
-          "validation message"
-        ],
-        "constraints": [
-          "Giữ nội dung tiếng Việt ngắn gọn",
-          "Ưu tiên bố cục mobile portrait",
-          "Không để text đè lên nút/hình/canvas"
-        ],
-        "requested_changes": []
-      }
+      "name": "favicon",
+      "asset": "assets/images/logo-anti-mosquito.svg",
+      "used_for": "Icon tab trình duyệt"
     },
     {
-      "id": "02-main-menu",
-      "name": "Menu chính",
-      "screenshot": "docs/ui-screenshots/02-main-menu.png",
-      "viewport": {
-        "width": 390,
-        "height": 844,
-        "profile": "mobile portrait"
-      },
-      "screen_id": "menuScreen",
-      "dom_class": "screen menu-screen is-active",
-      "active_screen_size": {
-        "width": 390,
-        "height": 844
-      },
-      "acquisition": "normal navigation",
-      "description_vi": "Màn menu có logo lớn, dải trạng thái nickname/xu/vật phẩm, nhóm nút điều hướng và bảng top cá nhân/toàn cầu.",
-      "visible_text": [
-        "Nickname",
-        "Ka Bao",
-        "Tổng xu",
-        "180",
-        "Đang dùng",
-        "Vợt",
-        "Play",
-        "Shop",
-        "Tủ đồ",
-        "Nhiệm vụ",
-        "Thiết lập",
-        "Hướng dẫn",
-        "Top cá nhân",
-        "31 điểm - 31 xu",
-        "24 điểm - 24 xu",
-        "18 điểm - 18 xu",
-        "Top toàn cầu",
-        "#1 3kk - 59 điểm",
-        "#2 3kk - 57 điểm",
-        "#3 3kk - 56 điểm",
-        "#4 Kabao - 54 điểm",
-        "#5 Kabao - 52 điểm"
-      ],
-      "controls": [
-        {
-          "tag": "button",
-          "id": "playButton",
-          "className": "primary-action",
-          "text": "Play",
-          "disabled": false,
-          "ariaLabel": ""
-        },
-        {
-          "tag": "button",
-          "id": "friendsButton",
-          "className": "secondary-action is-hidden",
-          "text": "Bạn bè",
-          "disabled": false,
-          "ariaLabel": ""
-        },
-        {
-          "tag": "button",
-          "id": "shopButton",
-          "className": "secondary-action",
-          "text": "Shop",
-          "disabled": false,
-          "ariaLabel": ""
-        },
-        {
-          "tag": "button",
-          "id": "inventoryButton",
-          "className": "secondary-action",
-          "text": "Tủ đồ",
-          "disabled": false,
-          "ariaLabel": ""
-        },
-        {
-          "tag": "button",
-          "id": "missionsButton",
-          "className": "secondary-action mission-entry",
-          "text": "Nhiệm vụ",
-          "disabled": false,
-          "ariaLabel": ""
-        },
-        {
-          "tag": "button",
-          "id": "settingsButton",
-          "className": "secondary-action",
-          "text": "Thiết lập",
-          "disabled": false,
-          "ariaLabel": ""
-        },
-        {
-          "tag": "button",
-          "id": "tutorialButton",
-          "className": "secondary-action",
-          "text": "Hướng dẫn",
-          "disabled": false,
-          "ariaLabel": ""
-        }
-      ],
-      "image_assets": [
-        {
-          "src": "assets/lip/branding/logo-game.png",
-          "alt": "Logo Đập muỗi cùng Ka Báo"
-        },
-        {
-          "src": "assets/lip/ui/pack/coin-icon.png",
-          "alt": ""
-        }
-      ],
-      "responsive_check": {
-        "horizontal_overflow_candidates": []
-      },
-      "ui_edit_brief": {
-        "purpose": "Hub chính để vào chơi, shop, tủ đồ, nhiệm vụ, thiết lập và hướng dẫn.",
-        "primary_regions": [
-          "menu-hero",
-          "status-strip",
-          "hub-actions",
-          "leaderboard-grid"
-        ],
-        "likely_edit_targets": [
-          "menu button hierarchy",
-          "status strip density",
-          "leaderboard layout",
-          "mascot/logo placement"
-        ],
-        "constraints": [
-          "Giữ nội dung tiếng Việt ngắn gọn",
-          "Ưu tiên bố cục mobile portrait",
-          "Không để text đè lên nút/hình/canvas"
-        ],
-        "requested_changes": []
-      }
+      "name": "home",
+      "asset": "assets/lip/ui/pack/home-button.png",
+      "used_for": "Nút quay về menu trên các panel"
     },
     {
-      "id": "03-settings",
-      "name": "Thiết lập",
-      "screenshot": "docs/ui-screenshots/03-settings.png",
-      "viewport": {
-        "width": 390,
-        "height": 844,
-        "profile": "mobile portrait"
-      },
-      "screen_id": "settingsScreen",
-      "dom_class": "screen panel-screen is-active",
-      "active_screen_size": {
-        "width": 390,
-        "height": 844
-      },
-      "acquisition": "normal navigation",
-      "description_vi": "Panel thiết lập với header, nút home, các dòng cài đặt và hành động nguy hiểm tạo lại nickname.",
-      "visible_text": [
-        "THIẾT LẬP",
-        "Tài khoản & âm thanh",
-        "⌂",
-        "Nickname hiện tại",
-        "Ka Bao",
-        "Âm thanh",
-        "Bật hoặc tắt âm thanh.",
-        "Tắt âm",
-        "Tạo lại nickname",
-        "Nhập tên mới.",
-        "Tạo lại"
-      ],
-      "controls": [
-        {
-          "tag": "button",
-          "id": "",
-          "className": "icon-action",
-          "text": "⌂",
-          "disabled": false,
-          "ariaLabel": "Về menu"
-        },
-        {
-          "tag": "button",
-          "id": "settingsSoundButton",
-          "className": "sound-toggle",
-          "text": "Tắt âm",
-          "disabled": false,
-          "ariaLabel": ""
-        },
-        {
-          "tag": "button",
-          "id": "resetAccountButton",
-          "className": "secondary-action danger-action",
-          "text": "Tạo lại",
-          "disabled": false,
-          "ariaLabel": ""
-        }
-      ],
-      "image_assets": [],
-      "responsive_check": {
-        "horizontal_overflow_candidates": []
-      },
-      "ui_edit_brief": {
-        "purpose": "Quản lý nickname hiện tại, âm thanh và reset tài khoản.",
-        "primary_regions": [
-          "panel-header",
-          "settings-panel",
-          "setting-row"
-        ],
-        "likely_edit_targets": [
-          "danger action treatment",
-          "toggle visual state",
-          "row spacing"
-        ],
-        "constraints": [
-          "Giữ nội dung tiếng Việt ngắn gọn",
-          "Ưu tiên bố cục mobile portrait",
-          "Không để text đè lên nút/hình/canvas"
-        ],
-        "requested_changes": []
-      }
+      "name": "sound",
+      "asset": "assets/lip/ui/pack/timer-icon.png",
+      "used_for": "Nút bật/tắt âm thanh"
     },
     {
-      "id": "04-shop",
-      "name": "Shop",
-      "screenshot": "docs/ui-screenshots/04-shop.png",
-      "viewport": {
-        "width": 390,
-        "height": 844,
-        "profile": "mobile portrait"
-      },
-      "screen_id": "shopScreen",
-      "dom_class": "screen panel-screen is-active",
-      "active_screen_size": {
-        "width": 390,
-        "height": 844
-      },
-      "acquisition": "normal navigation",
-      "description_vi": "Shop hiển thị thông báo số xu và grid vật phẩm với giá/trạng thái sở hữu.",
-      "visible_text": [
-        "SHOP",
-        "Đổi xu lấy vật phẩm",
-        "⌂",
-        "Bạn đang có 180 xu.",
-        "Dép thần tốc",
-        "Miễn phí",
-        "Đã sở hữu",
-        "Đã có",
-        "Vở gió giấy",
-        "40 xu",
-        "Đã sở hữu",
-        "Đã có",
-        "Vợt muỗi điện",
-        "80 xu",
-        "Đã sở hữu",
-        "Đã có",
-        "Điện thoại bộp",
-        "120 xu",
-        "Mua 120 xu"
-      ],
-      "controls": [
-        {
-          "tag": "button",
-          "id": "",
-          "className": "icon-action",
-          "text": "⌂",
-          "disabled": false,
-          "ariaLabel": "Về menu"
-        },
-        {
-          "tag": "button",
-          "id": "",
-          "className": "secondary-action",
-          "text": "Đã có",
-          "disabled": true,
-          "ariaLabel": ""
-        },
-        {
-          "tag": "button",
-          "id": "",
-          "className": "secondary-action",
-          "text": "Đã có",
-          "disabled": true,
-          "ariaLabel": ""
-        },
-        {
-          "tag": "button",
-          "id": "",
-          "className": "secondary-action",
-          "text": "Đã có",
-          "disabled": true,
-          "ariaLabel": ""
-        },
-        {
-          "tag": "button",
-          "id": "",
-          "className": "primary-action",
-          "text": "Mua 120 xu",
-          "disabled": false,
-          "ariaLabel": ""
-        }
-      ],
-      "image_assets": [
-        {
-          "src": "assets/lip/weapons/slipper/frames/idle.png",
-          "alt": "Dép thần tốc"
-        },
-        {
-          "src": "assets/lip/weapons/notebook/frames/idle.png",
-          "alt": "Vở gió giấy"
-        },
-        {
-          "src": "assets/lip/weapons/swatter/frames/idle.png",
-          "alt": "Vợt muỗi điện"
-        },
-        {
-          "src": "assets/lip/weapons/phone/frames/idle.png",
-          "alt": "Điện thoại bộp"
-        }
-      ],
-      "responsive_check": {
-        "horizontal_overflow_candidates": []
-      },
-      "ui_edit_brief": {
-        "purpose": "Xem và mua vật phẩm bằng xu.",
-        "primary_regions": [
-          "panel-header",
-          "shopMessage",
-          "item-grid"
-        ],
-        "likely_edit_targets": [
-          "item card design",
-          "price/owned states",
-          "grid responsiveness"
-        ],
-        "constraints": [
-          "Giữ nội dung tiếng Việt ngắn gọn",
-          "Ưu tiên bố cục mobile portrait",
-          "Không để text đè lên nút/hình/canvas"
-        ],
-        "requested_changes": []
-      }
+      "name": "coin",
+      "asset": "assets/lip/ui/pack/coin-icon.png",
+      "used_for": "Tổng xu, giá mua, tiến độ nhiệm vụ và HUD xu"
     },
     {
-      "id": "05-inventory",
-      "name": "Tủ đồ",
-      "screenshot": "docs/ui-screenshots/05-inventory.png",
-      "viewport": {
-        "width": 390,
-        "height": 844,
-        "profile": "mobile portrait"
-      },
-      "screen_id": "inventoryScreen",
-      "dom_class": "screen panel-screen is-active",
-      "active_screen_size": {
-        "width": 390,
-        "height": 844
-      },
-      "acquisition": "normal navigation",
-      "description_vi": "Tủ đồ hiển thị các vật phẩm đã có, trạng thái đang dùng và nút trang bị.",
-      "visible_text": [
-        "TỦ ĐỒ",
-        "Chọn vật phẩm",
-        "⌂",
-        "Chọn một vật phẩm để dùng trong trận kế tiếp.",
-        "Dép thần tốc",
-        "Miễn phí",
-        "Đã sở hữu",
-        "Trang bị",
-        "Vở gió giấy",
-        "40 xu",
-        "Đã sở hữu",
-        "Trang bị",
-        "Vợt muỗi điện",
-        "80 xu",
-        "Đang dùng",
-        "Đang dùng"
-      ],
-      "controls": [
-        {
-          "tag": "button",
-          "id": "",
-          "className": "icon-action",
-          "text": "⌂",
-          "disabled": false,
-          "ariaLabel": "Về menu"
-        },
-        {
-          "tag": "button",
-          "id": "",
-          "className": "primary-action",
-          "text": "Trang bị",
-          "disabled": false,
-          "ariaLabel": ""
-        },
-        {
-          "tag": "button",
-          "id": "",
-          "className": "primary-action",
-          "text": "Trang bị",
-          "disabled": false,
-          "ariaLabel": ""
-        },
-        {
-          "tag": "button",
-          "id": "",
-          "className": "secondary-action",
-          "text": "Đang dùng",
-          "disabled": true,
-          "ariaLabel": ""
-        }
-      ],
-      "image_assets": [
-        {
-          "src": "assets/lip/weapons/slipper/frames/idle.png",
-          "alt": "Dép thần tốc"
-        },
-        {
-          "src": "assets/lip/weapons/notebook/frames/idle.png",
-          "alt": "Vở gió giấy"
-        },
-        {
-          "src": "assets/lip/weapons/swatter/frames/idle.png",
-          "alt": "Vợt muỗi điện"
-        }
-      ],
-      "responsive_check": {
-        "horizontal_overflow_candidates": []
-      },
-      "ui_edit_brief": {
-        "purpose": "Chọn vật phẩm đã sở hữu để dùng trận kế tiếp.",
-        "primary_regions": [
-          "panel-header",
-          "inventoryMessage",
-          "item-grid"
-        ],
-        "likely_edit_targets": [
-          "equipped state",
-          "empty/owned item card",
-          "item thumbnail clarity"
-        ],
-        "constraints": [
-          "Giữ nội dung tiếng Việt ngắn gọn",
-          "Ưu tiên bố cục mobile portrait",
-          "Không để text đè lên nút/hình/canvas"
-        ],
-        "requested_changes": []
-      }
+      "name": "check",
+      "asset": "assets/lip/icons/menu/inventory.png",
+      "used_for": "Trạng thái đã có, đang dùng hoặc đã hoàn tất"
     },
     {
-      "id": "06-missions",
-      "name": "Nhiệm vụ",
-      "screenshot": "docs/ui-screenshots/06-missions.png",
-      "viewport": {
-        "width": 390,
-        "height": 844,
-        "profile": "mobile portrait"
-      },
-      "screen_id": "missionsScreen",
-      "dom_class": "screen panel-screen is-active",
-      "active_screen_size": {
-        "width": 390,
-        "height": 844
-      },
-      "acquisition": "normal navigation",
-      "description_vi": "Màn nhiệm vụ có thể hiển thị trạng thái đang tải/không online hoặc danh sách nhiệm vụ theo Firebase.",
-      "visible_text": [
-        "MỖI NGÀY",
-        "Nhiệm vụ nhận xu",
-        "⌂",
-        "Nhiệm vụ dùng thời gian Firebase/server và cần kết nối mạng."
-      ],
-      "controls": [
-        {
-          "tag": "button",
-          "id": "",
-          "className": "icon-action",
-          "text": "⌂",
-          "disabled": false,
-          "ariaLabel": "Về menu"
-        }
-      ],
-      "image_assets": [],
-      "responsive_check": {
-        "horizontal_overflow_candidates": []
-      },
-      "ui_edit_brief": {
-        "purpose": "Xem tiến độ nhiệm vụ hằng ngày và nhận xu thưởng.",
-        "primary_regions": [
-          "panel-header",
-          "missionsMessage",
-          "mission-list"
-        ],
-        "likely_edit_targets": [
-          "loading/offline state",
-          "mission card progress",
-          "claim button state"
-        ],
-        "constraints": [
-          "Giữ nội dung tiếng Việt ngắn gọn",
-          "Ưu tiên bố cục mobile portrait",
-          "Không để text đè lên nút/hình/canvas"
-        ],
-        "requested_changes": []
-      }
+      "name": "equip",
+      "asset": "assets/lip/weapons/swatter/frames/idle.png",
+      "used_for": "Hành động trang bị vật phẩm"
     },
     {
-      "id": "07-friends-hidden",
-      "name": "Bạn bè / phòng",
-      "screenshot": "docs/ui-screenshots/07-friends-hidden.png",
-      "viewport": {
-        "width": 390,
-        "height": 844,
-        "profile": "mobile portrait"
-      },
-      "screen_id": "friendsScreen",
-      "dom_class": "screen panel-screen is-active",
-      "active_screen_size": {
-        "width": 390,
-        "height": 844
-      },
-      "acquisition": "forced visible because menu entry is hidden",
-      "description_vi": "Màn bạn bè tồn tại trong HTML nhưng nút menu đang ẩn; ảnh chụp bật section trực tiếp để ghi nhận UI.",
-      "visible_text": [
-        "BẠN BÈ",
-        "Mã phòng theo trận",
-        "⌂",
-        "Mã phòng",
-        "Vào",
-        "Tạo phòng mới",
-        "Bảng phòng"
-      ],
-      "controls": [
-        {
-          "tag": "button",
-          "id": "",
-          "className": "icon-action",
-          "text": "⌂",
-          "disabled": false,
-          "ariaLabel": "Về menu"
-        },
-        {
-          "tag": "input",
-          "id": "roomCodeInput",
-          "className": "",
-          "text": "VD: KAB27",
-          "disabled": false,
-          "ariaLabel": ""
-        },
-        {
-          "tag": "button",
-          "id": "joinRoomButton",
-          "className": "secondary-action nickname-submit",
-          "text": "Vào",
-          "disabled": false,
-          "ariaLabel": ""
-        },
-        {
-          "tag": "button",
-          "id": "createRoomButton",
-          "className": "primary-action",
-          "text": "Tạo phòng mới",
-          "disabled": false,
-          "ariaLabel": ""
-        }
-      ],
-      "image_assets": [],
-      "responsive_check": {
-        "horizontal_overflow_candidates": []
-      },
-      "ui_edit_brief": {
-        "purpose": "Tạo/nhập mã phòng và xem bảng điểm phòng.",
-        "primary_regions": [
-          "room-form",
-          "room-list",
-          "roomLeaderboard"
-        ],
-        "likely_edit_targets": [
-          "room form layout",
-          "hidden feature visibility",
-          "leaderboard empty/loading state"
-        ],
-        "constraints": [
-          "Giữ nội dung tiếng Việt ngắn gọn",
-          "Ưu tiên bố cục mobile portrait",
-          "Không để text đè lên nút/hình/canvas"
-        ],
-        "requested_changes": []
-      }
-    },
-    {
-      "id": "08-tutorial-step-1",
-      "name": "Hướng dẫn bước 1",
-      "screenshot": "docs/ui-screenshots/08-tutorial-step-1.png",
-      "viewport": {
-        "width": 390,
-        "height": 844,
-        "profile": "mobile portrait"
-      },
-      "screen_id": "tutorialScreen",
-      "dom_class": "screen tutorial-screen is-active",
-      "active_screen_size": {
-        "width": 390,
-        "height": 844
-      },
-      "acquisition": "normal navigation",
-      "description_vi": "Tutorial card với hình minh họa, bước 1/3, nút Tiếp và Bỏ qua.",
-      "visible_text": [
-        "BƯỚC 1/3",
-        "Chạm vào muỗi",
-        "Chạm thật nhanh vào muỗi đang bay để ghi điểm và nhận xu.",
-        "Tiếp",
-        "Bỏ qua"
-      ],
-      "controls": [
-        {
-          "tag": "button",
-          "id": "tutorialNextButton",
-          "className": "primary-action",
-          "text": "Tiếp",
-          "disabled": false,
-          "ariaLabel": ""
-        },
-        {
-          "tag": "button",
-          "id": "tutorialSkipButton",
-          "className": "secondary-action",
-          "text": "Bỏ qua",
-          "disabled": false,
-          "ariaLabel": ""
-        }
-      ],
-      "image_assets": [
-        {
-          "src": "assets/lip/characters/kabao/poses/pointing.png",
-          "alt": ""
-        }
-      ],
-      "responsive_check": {
-        "horizontal_overflow_candidates": []
-      },
-      "ui_edit_brief": {
-        "purpose": "Onboarding cơ chế chạm muỗi.",
-        "primary_regions": [
-          "tutorial-card",
-          "tutorialImage",
-          "result-actions"
-        ],
-        "likely_edit_targets": [
-          "tutorial illustration scale",
-          "copy length",
-          "button placement"
-        ],
-        "constraints": [
-          "Giữ nội dung tiếng Việt ngắn gọn",
-          "Ưu tiên bố cục mobile portrait",
-          "Không để text đè lên nút/hình/canvas"
-        ],
-        "requested_changes": []
-      }
-    },
-    {
-      "id": "09-tutorial-step-2",
-      "name": "Hướng dẫn bước 2",
-      "screenshot": "docs/ui-screenshots/09-tutorial-step-2.png",
-      "viewport": {
-        "width": 390,
-        "height": 844,
-        "profile": "mobile portrait"
-      },
-      "screen_id": "tutorialScreen",
-      "dom_class": "screen tutorial-screen is-active",
-      "active_screen_size": {
-        "width": 390,
-        "height": 844
-      },
-      "acquisition": "normal navigation",
-      "description_vi": "Tutorial bước 2 trong cùng layout card.",
-      "visible_text": [
-        "BƯỚC 2/3",
-        "Đập liên tiếp",
-        "Đập nhiều muỗi thật nhanh để tạo combo vui mắt.",
-        "Tiếp",
-        "Bỏ qua"
-      ],
-      "controls": [
-        {
-          "tag": "button",
-          "id": "tutorialNextButton",
-          "className": "primary-action",
-          "text": "Tiếp",
-          "disabled": false,
-          "ariaLabel": ""
-        },
-        {
-          "tag": "button",
-          "id": "tutorialSkipButton",
-          "className": "secondary-action",
-          "text": "Bỏ qua",
-          "disabled": false,
-          "ariaLabel": ""
-        }
-      ],
-      "image_assets": [
-        {
-          "src": "assets/lip/characters/kabao/poses/hero.png",
-          "alt": ""
-        }
-      ],
-      "responsive_check": {
-        "horizontal_overflow_candidates": []
-      },
-      "ui_edit_brief": {
-        "purpose": "Giải thích combo/xu hoặc luật tiếp theo.",
-        "primary_regions": [
-          "tutorial-card",
-          "tutorialImage",
-          "result-actions"
-        ],
-        "likely_edit_targets": [
-          "step transition consistency",
-          "text hierarchy"
-        ],
-        "constraints": [
-          "Giữ nội dung tiếng Việt ngắn gọn",
-          "Ưu tiên bố cục mobile portrait",
-          "Không để text đè lên nút/hình/canvas"
-        ],
-        "requested_changes": []
-      }
-    },
-    {
-      "id": "10-tutorial-step-3",
-      "name": "Hướng dẫn bước 3",
-      "screenshot": "docs/ui-screenshots/10-tutorial-step-3.png",
-      "viewport": {
-        "width": 390,
-        "height": 844,
-        "profile": "mobile portrait"
-      },
-      "screen_id": "tutorialScreen",
-      "dom_class": "screen tutorial-screen is-active",
-      "active_screen_size": {
-        "width": 390,
-        "height": 844
-      },
-      "acquisition": "normal navigation",
-      "description_vi": "Tutorial bước 3, nút chính chuẩn bị kết thúc hướng dẫn.",
-      "visible_text": [
-        "BƯỚC 3/3",
-        "Tung xúc xắc",
-        "Hết giờ, tung xúc xắc một lần để nhận thêm xu thưởng.",
-        "Chơi ngay",
-        "Bỏ qua"
-      ],
-      "controls": [
-        {
-          "tag": "button",
-          "id": "tutorialNextButton",
-          "className": "primary-action",
-          "text": "Chơi ngay",
-          "disabled": false,
-          "ariaLabel": ""
-        },
-        {
-          "tag": "button",
-          "id": "tutorialSkipButton",
-          "className": "secondary-action",
-          "text": "Bỏ qua",
-          "disabled": false,
-          "ariaLabel": ""
-        }
-      ],
-      "image_assets": [
-        {
-          "src": "assets/lip/characters/kabao/poses/holding-coin.png",
-          "alt": ""
-        }
-      ],
-      "responsive_check": {
-        "horizontal_overflow_candidates": []
-      },
-      "ui_edit_brief": {
-        "purpose": "Hoàn tất onboarding trước khi chơi.",
-        "primary_regions": [
-          "tutorial-card",
-          "tutorialImage",
-          "result-actions"
-        ],
-        "likely_edit_targets": [
-          "final CTA copy",
-          "image alignment"
-        ],
-        "constraints": [
-          "Giữ nội dung tiếng Việt ngắn gọn",
-          "Ưu tiên bố cục mobile portrait",
-          "Không để text đè lên nút/hình/canvas"
-        ],
-        "requested_changes": []
-      }
-    },
-    {
-      "id": "11-gameplay",
-      "name": "Gameplay",
-      "screenshot": "docs/ui-screenshots/11-gameplay.png",
-      "viewport": {
-        "width": 390,
-        "height": 844,
-        "profile": "mobile portrait"
-      },
-      "screen_id": "gameplayScreen",
-      "dom_class": "screen gameplay-screen is-active",
-      "active_screen_size": {
-        "width": 390,
-        "height": 844
-      },
-      "acquisition": "normal navigation",
-      "description_vi": "Gameplay có HUD điểm/thời gian/xu/âm thanh và canvas full-screen để chạm muỗi.",
-      "visible_text": [
-        "Điểm",
-        "0",
-        "Thời gian",
-        "00:28",
-        "Xu",
-        "0",
-        "Tắt"
-      ],
-      "controls": [
-        {
-          "tag": "button",
-          "id": "gameSoundButton",
-          "className": "sound-toggle sound-toggle--hud",
-          "text": "Tắt",
-          "disabled": false,
-          "ariaLabel": ""
-        },
-        {
-          "tag": "canvas",
-          "id": "gameCanvas",
-          "className": "",
-          "text": "Vùng chơi đập muỗi",
-          "disabled": false,
-          "ariaLabel": "Vùng chơi đập muỗi"
-        }
-      ],
-      "image_assets": [
-        {
-          "src": "assets/lip/ui/pack/score-icon.png",
-          "alt": ""
-        },
-        {
-          "src": "assets/lip/ui/pack/timer-icon.png",
-          "alt": ""
-        },
-        {
-          "src": "assets/lip/ui/pack/coin-icon.png",
-          "alt": ""
-        }
-      ],
-      "responsive_check": {
-        "horizontal_overflow_candidates": []
-      },
-      "ui_edit_brief": {
-        "purpose": "Màn chơi chính với HUD và canvas bắt muỗi.",
-        "primary_regions": [
-          "hud",
-          "gameCanvas"
-        ],
-        "likely_edit_targets": [
-          "HUD readability",
-          "canvas safe area",
-          "sound button compactness",
-          "visual contrast over background"
-        ],
-        "constraints": [
-          "Giữ nội dung tiếng Việt ngắn gọn",
-          "Ưu tiên bố cục mobile portrait",
-          "Không để text đè lên nút/hình/canvas"
-        ],
-        "requested_changes": []
-      }
-    },
-    {
-      "id": "12-result-before-dice",
-      "name": "Kết quả trước tung xúc xắc",
-      "screenshot": "docs/ui-screenshots/12-result-before-dice.png",
-      "viewport": {
-        "width": 390,
-        "height": 844,
-        "profile": "mobile portrait"
-      },
-      "screen_id": "resultScreen",
-      "dom_class": "screen result-screen is-active",
-      "active_screen_size": {
-        "width": 390,
-        "height": 844
-      },
-      "acquisition": "normal navigation",
-      "description_vi": "Result panel có điểm, xu, số trận, combo, khu vực xúc xắc và nút chơi lại/về menu.",
-      "visible_text": [
-        "KẾT QUẢ",
-        "Hết giờ!",
-        "Tắt âm",
-        "Vào top 5! Hạng 4.",
-        "Vào top 5 #4",
-        "Vợt",
-        "Đang chơi với tên Ka Bao.",
-        "Điểm",
-        "0",
-        "Muỗi đã đập",
-        "0",
-        "Xu nhận được",
-        "0",
-        "Tổng xu",
-        "180",
-        "Số trận",
-        "8",
-        "Combo cao nhất",
-        "0",
-        "Xúc xắc thưởng xu",
-        "Tung một lần để nhận thêm xu thưởng.",
-        "🎲",
-        "Thưởng",
-        "0",
-        "Chơi lại",
-        "Về màn hình chính"
-      ],
-      "controls": [
-        {
-          "tag": "button",
-          "id": "resultSoundButton",
-          "className": "sound-toggle sound-toggle--result",
-          "text": "Tắt âm",
-          "disabled": false,
-          "ariaLabel": ""
-        },
-        {
-          "tag": "input",
-          "id": "nicknameInput",
-          "className": "",
-          "text": "VD: Bé Vui",
-          "disabled": false,
-          "ariaLabel": ""
-        },
-        {
-          "tag": "button",
-          "id": "",
-          "className": "secondary-action nickname-submit",
-          "text": "Lưu",
-          "disabled": false,
-          "ariaLabel": ""
-        },
-        {
-          "tag": "button",
-          "id": "diceButton",
-          "className": "dice-button",
-          "text": "🎲",
-          "disabled": false,
-          "ariaLabel": "Tung xúc xắc"
-        },
-        {
-          "tag": "button",
-          "id": "replayButton",
-          "className": "primary-action",
-          "text": "Chơi lại",
-          "disabled": false,
-          "ariaLabel": ""
-        },
-        {
-          "tag": "button",
-          "id": "homeButton",
-          "className": "secondary-action",
-          "text": "Về màn hình chính",
-          "disabled": false,
-          "ariaLabel": ""
-        }
-      ],
-      "image_assets": [],
-      "responsive_check": {
-        "horizontal_overflow_candidates": []
-      },
-      "ui_edit_brief": {
-        "purpose": "Tổng kết trận và mời tung xúc xắc thưởng xu.",
-        "primary_regions": [
-          "result-panel",
-          "result-stats",
-          "dice-panel",
-          "result-actions"
-        ],
-        "likely_edit_targets": [
-          "result panel vertical density",
-          "stats grid",
-          "dice reward affordance",
-          "action buttons"
-        ],
-        "constraints": [
-          "Giữ nội dung tiếng Việt ngắn gọn",
-          "Ưu tiên bố cục mobile portrait",
-          "Không để text đè lên nút/hình/canvas"
-        ],
-        "requested_changes": []
-      }
-    },
-    {
-      "id": "13-result-after-dice",
-      "name": "Kết quả sau tung xúc xắc",
-      "screenshot": "docs/ui-screenshots/13-result-after-dice.png",
-      "viewport": {
-        "width": 390,
-        "height": 844,
-        "profile": "mobile portrait"
-      },
-      "screen_id": "resultScreen",
-      "dom_class": "screen result-screen is-active",
-      "active_screen_size": {
-        "width": 390,
-        "height": 844
-      },
-      "acquisition": "normal navigation",
-      "description_vi": "Dice panel cập nhật thông báo mặt xúc xắc và bonus, nút xúc xắc bị vô hiệu hóa.",
-      "visible_text": [
-        "KẾT QUẢ",
-        "Hết giờ!",
-        "Tắt âm",
-        "Vào top 5! Hạng 4.",
-        "Vào top 5 #4",
-        "Vợt",
-        "Đang chơi với tên Ka Bao.",
-        "Điểm",
-        "0",
-        "Muỗi đã đập",
-        "0",
-        "Xu nhận được",
-        "0",
-        "Tổng xu",
-        "180",
-        "Số trận",
-        "8",
-        "Combo cao nhất",
-        "0",
-        "Xúc xắc thưởng xu",
-        "Ra mặt 2: thưởng thêm 0 x 2 = 0 xu.",
-        "2",
-        "Thưởng",
-        "0",
-        "Chơi lại",
-        "Về màn hình chính"
-      ],
-      "controls": [
-        {
-          "tag": "button",
-          "id": "resultSoundButton",
-          "className": "sound-toggle sound-toggle--result",
-          "text": "Tắt âm",
-          "disabled": false,
-          "ariaLabel": ""
-        },
-        {
-          "tag": "input",
-          "id": "nicknameInput",
-          "className": "",
-          "text": "VD: Bé Vui",
-          "disabled": false,
-          "ariaLabel": ""
-        },
-        {
-          "tag": "button",
-          "id": "",
-          "className": "secondary-action nickname-submit",
-          "text": "Lưu",
-          "disabled": false,
-          "ariaLabel": ""
-        },
-        {
-          "tag": "button",
-          "id": "diceButton",
-          "className": "dice-button",
-          "text": "2",
-          "disabled": true,
-          "ariaLabel": "Tung xúc xắc"
-        },
-        {
-          "tag": "button",
-          "id": "replayButton",
-          "className": "primary-action",
-          "text": "Chơi lại",
-          "disabled": false,
-          "ariaLabel": ""
-        },
-        {
-          "tag": "button",
-          "id": "homeButton",
-          "className": "secondary-action",
-          "text": "Về màn hình chính",
-          "disabled": false,
-          "ariaLabel": ""
-        }
-      ],
-      "image_assets": [],
-      "responsive_check": {
-        "horizontal_overflow_candidates": []
-      },
-      "ui_edit_brief": {
-        "purpose": "Trạng thái sau khi nhận thưởng xúc xắc.",
-        "primary_regions": [
-          "dice-panel",
-          "resultTotalCoins",
-          "diceBonusValue"
-        ],
-        "likely_edit_targets": [
-          "disabled dice state",
-          "reward feedback emphasis",
-          "number formatting"
-        ],
-        "constraints": [
-          "Giữ nội dung tiếng Việt ngắn gọn",
-          "Ưu tiên bố cục mobile portrait",
-          "Không để text đè lên nút/hình/canvas"
-        ],
-        "requested_changes": []
-      }
+      "name": "claim",
+      "asset": "assets/lip/icons/menu/quests.png",
+      "used_for": "Hành động nhận thưởng nhiệm vụ"
     }
   ],
-  "suggested_json_workflow": {
-    "how_to_request_ui_changes": "Add concrete items into each screen.ui_edit_brief.requested_changes, referencing screenshot path and primary_regions.",
-    "change_item_shape": {
-      "region": "string, e.g. status-strip",
-      "problem": "string",
-      "desired_change": "string",
-      "priority": "low|medium|high",
-      "acceptance_check": "string"
+  "screens": [
+    {
+      "id": "accountScreen",
+      "name": "Tạo nickname",
+      "actions": [
+        {
+          "control": "accountNicknameInput",
+          "description": "Nhập nickname mới từ 2 đến 16 ký tự.",
+          "icon": null
+        },
+        {
+          "control": "nickname-submit",
+          "label": "Bắt đầu",
+          "description": "Tạo tài khoản và đi vào menu chính.",
+          "icon": null
+        }
+      ],
+      "icons": [
+        {
+          "name": "game-logo",
+          "asset": "assets/lip/branding/logo-game.png",
+          "used_for": "Logo nhận diện trên màn tạo nickname"
+        }
+      ]
+    },
+    {
+      "id": "menuScreen",
+      "name": "Menu chính",
+      "actions": [
+        {
+          "control": "playButton",
+          "label": "Play",
+          "description": "Bắt đầu trận chơi mới.",
+          "icon": "assets/lip/ui/pack/play-button.png"
+        },
+        {
+          "control": "friendsButton",
+          "label": "Bạn bè",
+          "description": "Mở màn tạo hoặc vào phòng bạn bè; nút hiện đang bị ẩn.",
+          "icon": null
+        },
+        {
+          "control": "shopButton",
+          "label": "Shop",
+          "description": "Mở shop để mua vật phẩm bằng xu.",
+          "icon": "assets/lip/icons/menu/shop.png"
+        },
+        {
+          "control": "inventoryButton",
+          "label": "Tủ đồ",
+          "description": "Mở tủ đồ để chọn vật phẩm sẽ dùng trong trận.",
+          "icon": "assets/lip/icons/menu/inventory.png"
+        },
+        {
+          "control": "missionsButton",
+          "label": "Nhiệm vụ",
+          "description": "Mở danh sách nhiệm vụ hằng ngày và nhận xu thưởng.",
+          "icon": "assets/lip/icons/menu/quests.png"
+        },
+        {
+          "control": "settingsButton",
+          "label": "Thiết lập",
+          "description": "Mở cài đặt tài khoản và âm thanh.",
+          "icon": "assets/lip/icons/menu/settings.png"
+        },
+        {
+          "control": "tutorialButton",
+          "label": "Hướng dẫn",
+          "description": "Mở hướng dẫn chơi từng bước.",
+          "icon": "assets/lip/characters/kabao/poses/pointing.png"
+        }
+      ],
+      "icons": [
+        {
+          "name": "game-logo",
+          "asset": "assets/lip/branding/logo-game.png",
+          "used_for": "Logo lớn trên hero menu"
+        },
+        {
+          "name": "coin-total",
+          "asset": "assets/lip/ui/pack/coin-icon.png",
+          "used_for": "Hiển thị tổng xu của người chơi"
+        },
+        {
+          "name": "mission-notify-dot",
+          "asset": null,
+          "used_for": "Dấu báo có nhiệm vụ cần chú ý, tạo bằng CSS"
+        }
+      ]
+    },
+    {
+      "id": "settingsScreen",
+      "name": "Thiết lập",
+      "actions": [
+        {
+          "control": "[data-home]",
+          "label": "Về menu",
+          "description": "Quay lại menu chính.",
+          "icon": "assets/lip/ui/pack/home-button.png"
+        },
+        {
+          "control": "settingsSoundButton",
+          "label": "Âm thanh",
+          "description": "Bật hoặc tắt âm thanh toàn game.",
+          "icon": "assets/lip/ui/pack/timer-icon.png"
+        },
+        {
+          "control": "resetAccountButton",
+          "label": "Tạo lại",
+          "description": "Xóa nickname hiện tại để nhập nickname mới.",
+          "icon": null
+        }
+      ],
+      "icons": []
+    },
+    {
+      "id": "shopScreen",
+      "name": "Shop",
+      "actions": [
+        {
+          "control": "[data-home]",
+          "label": "Về menu",
+          "description": "Quay lại menu chính.",
+          "icon": "assets/lip/ui/pack/home-button.png"
+        },
+        {
+          "control": "shop-item-buy",
+          "label": "Mua",
+          "description": "Mua vật phẩm chưa sở hữu bằng xu.",
+          "icon": "assets/lip/ui/pack/coin-icon.png"
+        },
+        {
+          "control": "shop-item-owned",
+          "label": "Đã có",
+          "description": "Cho biết vật phẩm đã sở hữu và không thể mua lại.",
+          "icon": "assets/lip/icons/menu/inventory.png"
+        }
+      ],
+      "icons": [
+        {
+          "name": "slipper",
+          "asset": "assets/lip/weapons/slipper/frames/idle.png",
+          "used_for": "Thumbnail vật phẩm Dép thần tốc"
+        },
+        {
+          "name": "notebook",
+          "asset": "assets/lip/weapons/notebook/frames/idle.png",
+          "used_for": "Thumbnail vật phẩm Vở gió giấy"
+        },
+        {
+          "name": "swatter",
+          "asset": "assets/lip/weapons/swatter/frames/idle.png",
+          "used_for": "Thumbnail vật phẩm Vợt muỗi điện"
+        },
+        {
+          "name": "phone",
+          "asset": "assets/lip/weapons/phone/frames/idle.png",
+          "used_for": "Thumbnail vật phẩm Điện thoại bộp"
+        }
+      ]
+    },
+    {
+      "id": "inventoryScreen",
+      "name": "Tủ đồ",
+      "actions": [
+        {
+          "control": "[data-home]",
+          "label": "Về menu",
+          "description": "Quay lại menu chính.",
+          "icon": "assets/lip/ui/pack/home-button.png"
+        },
+        {
+          "control": "inventory-item-equip",
+          "label": "Trang bị",
+          "description": "Chọn vật phẩm làm vũ khí cho trận tiếp theo.",
+          "icon": "assets/lip/weapons/swatter/frames/idle.png"
+        },
+        {
+          "control": "inventory-item-equipped",
+          "label": "Đang dùng",
+          "description": "Cho biết vật phẩm hiện đang được trang bị.",
+          "icon": "assets/lip/icons/menu/inventory.png"
+        }
+      ],
+      "icons": [
+        {
+          "name": "slipper",
+          "asset": "assets/lip/weapons/slipper/frames/idle.png",
+          "used_for": "Thumbnail vật phẩm Dép thần tốc"
+        },
+        {
+          "name": "notebook",
+          "asset": "assets/lip/weapons/notebook/frames/idle.png",
+          "used_for": "Thumbnail vật phẩm Vở gió giấy"
+        },
+        {
+          "name": "swatter",
+          "asset": "assets/lip/weapons/swatter/frames/idle.png",
+          "used_for": "Thumbnail vật phẩm Vợt muỗi điện"
+        },
+        {
+          "name": "phone",
+          "asset": "assets/lip/weapons/phone/frames/idle.png",
+          "used_for": "Thumbnail vật phẩm Điện thoại bộp khi đã sở hữu"
+        }
+      ]
+    },
+    {
+      "id": "missionsScreen",
+      "name": "Nhiệm vụ",
+      "actions": [
+        {
+          "control": "[data-home]",
+          "label": "Về menu",
+          "description": "Quay lại menu chính.",
+          "icon": "assets/lip/ui/pack/home-button.png"
+        },
+        {
+          "control": "mission-claim",
+          "label": "Nhận",
+          "description": "Nhận xu khi nhiệm vụ đã hoàn thành.",
+          "icon": "assets/lip/icons/menu/quests.png"
+        },
+        {
+          "control": "mission-progress",
+          "label": "Tiến độ",
+          "description": "Hiển thị tiến độ nhiệm vụ chưa hoàn thành.",
+          "icon": "assets/lip/ui/pack/coin-icon.png"
+        }
+      ],
+      "icons": []
+    },
+    {
+      "id": "friendsScreen",
+      "name": "Bạn bè / phòng",
+      "actions": [
+        {
+          "control": "[data-home]",
+          "label": "Về menu",
+          "description": "Quay lại menu chính.",
+          "icon": "assets/lip/ui/pack/home-button.png"
+        },
+        {
+          "control": "roomCodeInput",
+          "description": "Nhập mã phòng để tham gia.",
+          "icon": null
+        },
+        {
+          "control": "joinRoomButton",
+          "label": "Vào",
+          "description": "Tham gia phòng theo mã đã nhập.",
+          "icon": null
+        },
+        {
+          "control": "createRoomButton",
+          "label": "Tạo phòng mới",
+          "description": "Tạo phòng mới cho trận bạn bè.",
+          "icon": null
+        }
+      ],
+      "icons": []
+    },
+    {
+      "id": "tutorialScreen",
+      "name": "Hướng dẫn",
+      "actions": [
+        {
+          "control": "tutorialNextButton",
+          "label": "Tiếp / Chơi ngay",
+          "description": "Chuyển sang bước hướng dẫn tiếp theo hoặc bắt đầu chơi ở bước cuối.",
+          "icon": null
+        },
+        {
+          "control": "tutorialSkipButton",
+          "label": "Bỏ qua",
+          "description": "Bỏ qua hướng dẫn và đi tiếp.",
+          "icon": null
+        }
+      ],
+      "icons": [
+        {
+          "name": "tutorial-step-1",
+          "asset": "assets/lip/characters/kabao/poses/pointing.png",
+          "used_for": "Minh họa bước chạm vào muỗi"
+        },
+        {
+          "name": "tutorial-step-2",
+          "asset": "assets/lip/characters/kabao/poses/hero.png",
+          "used_for": "Minh họa bước đập liên tiếp"
+        },
+        {
+          "name": "tutorial-step-3",
+          "asset": "assets/lip/characters/kabao/poses/holding-coin.png",
+          "used_for": "Minh họa bước tung xúc xắc nhận xu"
+        }
+      ]
+    },
+    {
+      "id": "gameplayScreen",
+      "name": "Gameplay",
+      "actions": [
+        {
+          "control": "gameCanvas",
+          "description": "Chạm vào vùng chơi để đập muỗi đang bay.",
+          "icon": null
+        },
+        {
+          "control": "gameSoundButton",
+          "label": "Âm",
+          "description": "Bật hoặc tắt âm thanh trong lúc chơi.",
+          "icon": "assets/lip/ui/pack/timer-icon.png"
+        }
+      ],
+      "icons": [
+        {
+          "name": "score",
+          "asset": "assets/lip/ui/pack/score-icon.png",
+          "used_for": "HUD điểm"
+        },
+        {
+          "name": "timer",
+          "asset": "assets/lip/ui/pack/timer-icon.png",
+          "used_for": "HUD thời gian"
+        },
+        {
+          "name": "coin",
+          "asset": "assets/lip/ui/pack/coin-icon.png",
+          "used_for": "HUD xu"
+        }
+      ]
+    },
+    {
+      "id": "resultScreen",
+      "name": "Kết quả",
+      "actions": [
+        {
+          "control": "resultSoundButton",
+          "label": "Âm thanh",
+          "description": "Bật hoặc tắt âm thanh trên màn kết quả.",
+          "icon": "assets/lip/ui/pack/timer-icon.png"
+        },
+        {
+          "control": "nicknameInput",
+          "description": "Nhập nickname để lưu hoặc cập nhật tên hiển thị.",
+          "icon": null
+        },
+        {
+          "control": "nickname-submit",
+          "label": "Lưu",
+          "description": "Lưu nickname đã nhập.",
+          "icon": null
+        },
+        {
+          "control": "diceButton",
+          "label": "Xúc xắc",
+          "description": "Tung xúc xắc một lần để nhận thêm xu thưởng; sau khi tung sẽ bị vô hiệu hóa.",
+          "icon": "emoji:🎲"
+        },
+        {
+          "control": "replayButton",
+          "label": "Chơi lại",
+          "description": "Bắt đầu trận mới.",
+          "icon": "assets/lip/ui/pack/replay-button.png"
+        },
+        {
+          "control": "homeButton",
+          "label": "Về màn hình chính",
+          "description": "Quay lại menu chính.",
+          "icon": "assets/lip/ui/pack/home-button.png"
+        }
+      ],
+      "icons": [
+        {
+          "name": "dice",
+          "asset": "emoji:🎲",
+          "used_for": "Nút tung xúc xắc trước khi nhận thưởng"
+        }
+      ]
     }
-  }
+  ]
 }
