@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-19T05:33:50.735Z",
+  "generated_at": "2026-06-19T14:17:25.823Z",
   "app": {
     "name": "KaBao",
     "url": "http://127.0.0.1:4173/",
@@ -34,7 +34,7 @@
         "Tên của bạn là gì?",
         "Nickname của bạn",
         "Bắt đầu",
-        "Dùng 2-16 ký tự vui vẻ, không dùng từ thô tục hay nhạy cảm."
+        "Tên 2-16 ký tự."
       ],
       "controls": [
         {
@@ -56,7 +56,7 @@
       ],
       "image_assets": [
         {
-          "src": "assets/lip/Logo Game.png",
+          "src": "assets/lip/branding/logo-game.png",
           "alt": "Logo Đập muỗi cùng Ka Báo"
         }
       ],
@@ -185,11 +185,11 @@
       ],
       "image_assets": [
         {
-          "src": "assets/lip/Logo Game.png",
+          "src": "assets/lip/branding/logo-game.png",
           "alt": "Logo Đập muỗi cùng Ka Báo"
         },
         {
-          "src": "assets/lip/UI Pack_Assets/asset_07.png",
+          "src": "assets/lip/ui/pack/coin-icon.png",
           "alt": ""
         }
       ],
@@ -242,10 +242,10 @@
         "Nickname hiện tại",
         "Ka Bao",
         "Âm thanh",
-        "Bật hoặc tắt nhạc và hiệu ứng.",
+        "Bật hoặc tắt âm thanh.",
         "Tắt âm",
         "Tạo lại nickname",
-        "Xóa dữ liệu lưu trên máy này và nhập nickname mới.",
+        "Nhập tên mới.",
         "Tạo lại"
       ],
       "controls": [
@@ -321,22 +321,18 @@
         "⌂",
         "Bạn đang có 180 xu.",
         "Dép thần tốc",
-        "Vật phẩm mặc định, gọn nhẹ và quen tay.",
         "Miễn phí",
         "Đã sở hữu",
         "Đã có",
         "Vở gió giấy",
-        "Cú quạt giấy vui nhộn cho người chơi nhỏ tuổi.",
         "40 xu",
         "Đã sở hữu",
         "Đã có",
         "Vợt muỗi điện",
-        "Hiệu ứng điện sáng rõ, chỉ thay đổi hình ảnh.",
         "80 xu",
         "Đã sở hữu",
         "Đã có",
         "Điện thoại bộp",
-        "Một cú bộp hài hước, không ảnh hưởng điểm số.",
         "120 xu",
         "Mua 120 xu"
       ],
@@ -384,19 +380,19 @@
       ],
       "image_assets": [
         {
-          "src": "assets/lip/Slipper weapons_Assets/asset_01.png",
+          "src": "assets/lip/weapons/slipper/frames/idle.png",
           "alt": "Dép thần tốc"
         },
         {
-          "src": "assets/lip/notebook weapon_Assets/asset_01.png",
+          "src": "assets/lip/weapons/notebook/frames/idle.png",
           "alt": "Vở gió giấy"
         },
         {
-          "src": "assets/lip/mosquito swatter weapon_Assets/asset_01.png",
+          "src": "assets/lip/weapons/swatter/frames/idle.png",
           "alt": "Vợt muỗi điện"
         },
         {
-          "src": "assets/lip/smartphone weapon_Assets/asset_01.png",
+          "src": "assets/lip/weapons/phone/frames/idle.png",
           "alt": "Điện thoại bộp"
         }
       ],
@@ -446,17 +442,14 @@
         "⌂",
         "Chọn một vật phẩm để dùng trong trận kế tiếp.",
         "Dép thần tốc",
-        "Vật phẩm mặc định, gọn nhẹ và quen tay.",
         "Miễn phí",
         "Đã sở hữu",
         "Trang bị",
         "Vở gió giấy",
-        "Cú quạt giấy vui nhộn cho người chơi nhỏ tuổi.",
         "40 xu",
         "Đã sở hữu",
         "Trang bị",
         "Vợt muỗi điện",
-        "Hiệu ứng điện sáng rõ, chỉ thay đổi hình ảnh.",
         "80 xu",
         "Đang dùng",
         "Đang dùng"
@@ -497,15 +490,15 @@
       ],
       "image_assets": [
         {
-          "src": "assets/lip/Slipper weapons_Assets/asset_01.png",
+          "src": "assets/lip/weapons/slipper/frames/idle.png",
           "alt": "Dép thần tốc"
         },
         {
-          "src": "assets/lip/notebook weapon_Assets/asset_01.png",
+          "src": "assets/lip/weapons/notebook/frames/idle.png",
           "alt": "Vở gió giấy"
         },
         {
-          "src": "assets/lip/mosquito swatter weapon_Assets/asset_01.png",
+          "src": "assets/lip/weapons/swatter/frames/idle.png",
           "alt": "Vợt muỗi điện"
         }
       ],
@@ -717,7 +710,7 @@
       ],
       "image_assets": [
         {
-          "src": "assets/lip/Ka Báo Pose Sheet_Assets/asset_03.png",
+          "src": "assets/lip/characters/kabao/poses/pointing.png",
           "alt": ""
         }
       ],
@@ -788,7 +781,7 @@
       ],
       "image_assets": [
         {
-          "src": "assets/lip/Ka Báo Pose Sheet_Assets/asset_01.png",
+          "src": "assets/lip/characters/kabao/poses/hero.png",
           "alt": ""
         }
       ],
@@ -858,7 +851,7 @@
       ],
       "image_assets": [
         {
-          "src": "assets/lip/Ka Báo Pose Sheet_Assets/asset_05.png",
+          "src": "assets/lip/characters/kabao/poses/holding-coin.png",
           "alt": ""
         }
       ],
@@ -930,15 +923,15 @@
       ],
       "image_assets": [
         {
-          "src": "assets/lip/UI Pack_Assets/asset_05.png",
+          "src": "assets/lip/ui/pack/score-icon.png",
           "alt": ""
         },
         {
-          "src": "assets/lip/UI Pack_Assets/asset_08.png",
+          "src": "assets/lip/ui/pack/timer-icon.png",
           "alt": ""
         },
         {
-          "src": "assets/lip/UI Pack_Assets/asset_07.png",
+          "src": "assets/lip/ui/pack/coin-icon.png",
           "alt": ""
         }
       ],
@@ -1124,8 +1117,8 @@
         "Combo cao nhất",
         "0",
         "Xúc xắc thưởng xu",
-        "Ra mặt 1: thưởng thêm 0 x 1 = 0 xu.",
-        "1",
+        "Ra mặt 2: thưởng thêm 0 x 2 = 0 xu.",
+        "2",
         "Thưởng",
         "0",
         "Chơi lại",
@@ -1160,7 +1153,7 @@
           "tag": "button",
           "id": "diceButton",
           "className": "dice-button",
-          "text": "1",
+          "text": "2",
           "disabled": true,
           "ariaLabel": "Tung xúc xắc"
         },

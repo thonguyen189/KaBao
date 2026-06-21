@@ -42,10 +42,10 @@ Các URL local trả `200`:
 - `http://127.0.0.1:4173/`
 - `http://127.0.0.1:4173/src/main.js`
 - `http://127.0.0.1:4173/assets/asset-manifest.json`
-- `http://127.0.0.1:4173/assets/lip/SlipperWeapons_Assets/impact.png`
-- `http://127.0.0.1:4173/assets/lip/MosquitoSwatterWeapon_Assets/impact.png`
-- `http://127.0.0.1:4173/assets/lip/SmartphoneWeapon_Assets/impact.png`
-- `http://127.0.0.1:4173/assets/lip/NotebookWeapon_Assets/impact.png`
+- `http://127.0.0.1:4173/assets/lip/weapons/slipper/frames/impact.png`
+- `http://127.0.0.1:4173/assets/lip/weapons/swatter/frames/impact.png`
+- `http://127.0.0.1:4173/assets/lip/weapons/phone/frames/impact.png`
+- `http://127.0.0.1:4173/assets/lip/weapons/notebook/frames/impact.png`
 
 Manifest check:
 

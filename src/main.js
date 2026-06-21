@@ -619,6 +619,7 @@ function renderShop(message = '') {
     const action = document.createElement('button');
     action.className = owned ? 'secondary-action' : 'primary-action';
     action.type = 'button';
+    action.dataset.icon = owned ? 'check' : 'coin';
     action.textContent = owned ? 'Đã có' : `Mua ${item.price} xu`;
     action.disabled = owned;
     action.addEventListener('click', () => {
@@ -649,6 +650,7 @@ function renderInventory(message = '') {
       const action = document.createElement('button');
       action.className = itemId === equipped ? 'secondary-action' : 'primary-action';
       action.type = 'button';
+      action.dataset.icon = itemId === equipped ? 'check' : 'equip';
       action.textContent = itemId === equipped ? 'Đang dùng' : 'Trang bị';
       action.disabled = itemId === equipped;
       action.addEventListener('click', () => {
@@ -670,8 +672,6 @@ function createItemCard(item, owned, equipped = false) {
   const body = document.createElement('div');
   const title = document.createElement('h2');
   title.textContent = item.name;
-  const description = document.createElement('p');
-  description.textContent = item.description;
   const meta = document.createElement('div');
   meta.className = 'item-meta';
   const price = document.createElement('span');
@@ -684,17 +684,17 @@ function createItemCard(item, owned, equipped = false) {
     ownedLabel.textContent = equipped ? 'Đang dùng' : 'Đã sở hữu';
     meta.append(ownedLabel);
   }
-  body.append(title, description, meta);
+  body.append(title, meta);
   card.append(image, body);
   return card;
 }
 
 function assetPathForFrame(frameKey) {
   const manifestPath = {
-    weaponSlipperIdle: 'lip/Slipper weapons_Assets/asset_01.png',
-    weaponNotebookIdle: 'lip/notebook weapon_Assets/asset_01.png',
-    weaponSwatterIdle: 'lip/mosquito swatter weapon_Assets/asset_01.png',
-    weaponPhoneIdle: 'lip/smartphone weapon_Assets/asset_01.png'
+    weaponSlipperIdle: 'lip/weapons/slipper/frames/idle.png',
+    weaponNotebookIdle: 'lip/weapons/notebook/frames/idle.png',
+    weaponSwatterIdle: 'lip/weapons/swatter/frames/idle.png',
+    weaponPhoneIdle: 'lip/weapons/phone/frames/idle.png'
   };
   return manifestPath[frameKey] ?? 'images/slipper-hit.svg';
 }
@@ -741,6 +741,7 @@ function renderMissions() {
     const action = document.createElement('button');
     action.className = complete && !claimed ? 'primary-action' : 'secondary-action';
     action.type = 'button';
+    action.dataset.icon = complete && !claimed ? 'claim' : 'coin';
     action.textContent = claimed ? 'Đã nhận' : complete ? 'Nhận' : `${progress}/${mission.target}`;
     action.disabled = claimed || !complete;
     action.addEventListener('click', () => claimMission(missionId));
@@ -925,9 +926,9 @@ function renderTutorial() {
 
 function assetPathForTutorial(key) {
   const paths = {
-    kabaoPointing: 'lip/Ka Báo Pose Sheet_Assets/asset_03.png',
-    kabaoHero: 'lip/Ka Báo Pose Sheet_Assets/asset_01.png',
-    kabaoHoldingCoin: 'lip/Ka Báo Pose Sheet_Assets/asset_05.png'
+    kabaoPointing: 'lip/characters/kabao/poses/pointing.png',
+    kabaoHero: 'lip/characters/kabao/poses/hero.png',
+    kabaoHoldingCoin: 'lip/characters/kabao/poses/holding-coin.png'
   };
   return paths[key];
 }

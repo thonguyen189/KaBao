@@ -5,13 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Đập muỗi cùng Ka Báo</title>
     <link rel="icon" href="assets/images/logo-anti-mosquito.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="src/styles.css">
   </head>
   <body>
     <main class="app" aria-live="polite">
       <section class="screen account-screen" id="accountScreen">
         <article class="account-card">
-          <img class="account-logo" src="assets/lip/Logo Game.png" alt="Logo Đập muỗi cùng Ka Báo">
+          <img class="account-logo" src="assets/lip/branding/logo-game.png" alt="Logo Đập muỗi cùng Ka Báo">
           <p class="eyebrow">Tạo tài khoản</p>
           <h1>Tên của bạn là gì?</h1>
           <form class="nickname-form" id="accountForm" novalidate>
@@ -20,7 +23,7 @@
               <input id="accountNicknameInput" name="nickname" type="text" maxlength="16" autocomplete="nickname" placeholder="VD: Bé Vui">
               <button class="secondary-action nickname-submit" type="submit">Bắt đầu</button>
             </div>
-            <p class="nickname-help">Dùng 2-16 ký tự vui vẻ, không dùng từ thô tục hay nhạy cảm.</p>
+            <p class="nickname-help">Tên 2-16 ký tự.</p>
             <p class="nickname-error" id="accountNicknameError" role="alert"></p>
           </form>
         </article>
@@ -28,7 +31,7 @@
 
       <section class="screen menu-screen is-active" id="menuScreen">
         <header class="menu-hero">
-          <img class="hero-mascot" src="assets/lip/Logo Game.png" alt="Logo Đập muỗi cùng Ka Báo">
+          <img class="hero-mascot" src="assets/lip/branding/logo-game.png" alt="Logo Đập muỗi cùng Ka Báo">
         </header>
 
         <div class="status-strip">
@@ -37,7 +40,7 @@
             <strong id="menuNickname">Bạn nhỏ</strong>
           </div>
           <div class="coin-total">
-            <img src="assets/lip/UI Pack_Assets/asset_07.png" alt="" aria-hidden="true">
+            <img src="assets/lip/ui/pack/coin-icon.png" alt="" aria-hidden="true">
             <span>Tổng xu</span>
             <strong id="menuTotalCoins">0</strong>
           </div>
@@ -90,14 +93,14 @@
           <div class="setting-row">
             <div>
               <p class="setting-label">Âm thanh</p>
-              <span>Bật hoặc tắt nhạc và hiệu ứng.</span>
+              <span>Bật hoặc tắt âm thanh.</span>
             </div>
             <button class="sound-toggle" id="settingsSoundButton" type="button" aria-pressed="false">Âm thanh</button>
           </div>
           <div class="setting-row setting-row--danger">
             <div>
               <p class="setting-label">Tạo lại nickname</p>
-              <span>Xóa dữ liệu lưu trên máy này và nhập nickname mới.</span>
+              <span>Nhập tên mới.</span>
             </div>
             <button class="secondary-action danger-action" id="resetAccountButton" type="button">Tạo lại</button>
           </div>
@@ -166,7 +169,7 @@
 
       <section class="screen tutorial-screen" id="tutorialScreen">
         <article class="tutorial-card">
-          <img id="tutorialImage" src="assets/lip/Ka Báo Pose Sheet_Assets/asset_03.png" alt="">
+          <img id="tutorialImage" src="assets/lip/characters/kabao/poses/pointing.png" alt="">
           <p class="eyebrow" id="tutorialStep">Bước 1/3</p>
           <h1 id="tutorialTitle">Chạm vào muỗi</h1>
           <p id="tutorialCopy">Chạm thật nhanh vào muỗi đang bay để ghi điểm và nhận xu.</p>
@@ -180,17 +183,17 @@
       <section class="screen gameplay-screen" id="gameplayScreen">
         <header class="hud">
           <div class="hud-item">
-            <img src="assets/lip/UI Pack_Assets/asset_05.png" alt="" aria-hidden="true">
+            <img src="assets/lip/ui/pack/score-icon.png" alt="" aria-hidden="true">
             <span>Điểm</span>
             <strong id="scoreValue">0</strong>
           </div>
           <div class="hud-item timer">
-            <img src="assets/lip/UI Pack_Assets/asset_08.png" alt="" aria-hidden="true">
+            <img src="assets/lip/ui/pack/timer-icon.png" alt="" aria-hidden="true">
             <span>Thời gian</span>
             <strong id="timerValue">00:30</strong>
           </div>
           <div class="hud-item">
-            <img src="assets/lip/UI Pack_Assets/asset_07.png" alt="" aria-hidden="true">
+            <img src="assets/lip/ui/pack/coin-icon.png" alt="" aria-hidden="true">
             <span>Xu</span>
             <strong id="coinValue">0</strong>
           </div>
@@ -214,7 +217,7 @@
               <input id="nicknameInput" name="nickname" type="text" maxlength="16" autocomplete="nickname" placeholder="VD: Bé Vui">
               <button class="secondary-action nickname-submit" type="submit">Lưu</button>
             </div>
-            <p class="nickname-help">Dùng 2-16 ký tự vui vẻ, không dùng từ thô tục hay nhạy cảm.</p>
+            <p class="nickname-help">Tên 2-16 ký tự.</p>
             <p class="nickname-error" id="nicknameError" role="alert"></p>
           </form>
 
@@ -230,7 +233,7 @@
           <div class="dice-panel" id="dicePanel">
             <div>
               <p class="dice-title">Xúc xắc thưởng xu</p>
-              <p class="dice-copy" id="diceMessage">Tung một lần để nhận thêm xu thưởng.</p>
+              <p class="dice-copy" id="diceMessage">Tung để nhận xu.</p>
             </div>
             <button class="dice-button" id="diceButton" type="button" aria-label="Tung xúc xắc">🎲</button>
             <div class="dice-reward"><span>Thưởng</span><strong id="diceBonusValue">0</strong></div>

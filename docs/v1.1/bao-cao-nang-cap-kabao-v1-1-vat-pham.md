@@ -24,10 +24,10 @@ Bản nâng cấp V1.1 mở rộng game từ vòng chơi cơ bản thành một 
 
 Asset đã được đăng ký trong `assets/asset-manifest.json` từ các thư mục:
 
-- `assets/lip/SlipperWeapons_Assets/`
-- `assets/lip/NotebookWeapon_Assets/`
-- `assets/lip/MosquitoSwatterWeapon_Assets/`
-- `assets/lip/SmartphoneWeapon_Assets/`
+- `assets/lip/weapons/slipper/frames/`
+- `assets/lip/weapons/notebook/frames/`
+- `assets/lip/weapons/swatter/frames/`
+- `assets/lip/weapons/phone/frames/`
 
 ## 3. Dữ liệu mới
 
